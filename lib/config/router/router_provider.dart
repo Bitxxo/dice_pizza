@@ -26,14 +26,7 @@ List<GoRoute> _routes = [
       GoRoute(
         path: 'order',
         name: OrderScreen.name,
-        builder: (context, state) {
-          String? orderId = state.pathParameters['id'];
-          if (orderId == null || orderId == 'null') {
-            return const OrderScreen(null);
-          } else {
-            return OrderScreen(orderId);
-          }
-        },
+        builder: (context, state) => OrderScreen(),
         routes: [
           GoRoute(
             path: '/customer',
@@ -45,6 +38,13 @@ List<GoRoute> _routes = [
             name: OrderProductsView.name,
             builder: (context, state) => const OrderProductsView(),
           ),
+          /*
+          GoRoute(
+            path: '/ingredients',
+            name: OrderProductsView.name,
+            builder: (context, state) => const OrderProductsView(),
+          ),
+          */
           GoRoute(
             path: '/payment',
             name: OrderPaymentView.name,

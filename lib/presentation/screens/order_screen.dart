@@ -7,19 +7,13 @@ import 'package:dice_pizza/presentation/widgets/order_navigation_drawer.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class OrderScreen extends ConsumerStatefulWidget {
-  final String? orderId;
+class OrderScreen extends ConsumerWidget {
   static const name = "CreateOrder";
-  const OrderScreen(this.orderId, {super.key});
+  const OrderScreen({super.key});
 
   @override
-  ConsumerState<OrderScreen> createState() => _OrderScreenState();
-}
-
-class _OrderScreenState extends ConsumerState<OrderScreen> {
-  @override
-  Widget build(BuildContext context) {
-    final Widget? view = switch (ref.read(routerProvider).state.fullPath) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final Widget view = switch (ref.watch(routerProvider).state.fullPath) {
       RouterPaths.products => OrderProductsView(),
       RouterPaths.payment => OrderPaymentView(),
       RouterPaths.customer || String() || null => OrderCustomerView(),

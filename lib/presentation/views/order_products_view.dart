@@ -1,4 +1,5 @@
 import 'package:dice_pizza/presentation/widgets/order_navigation_drawer.dart';
+import 'package:dice_pizza/presentation/widgets/order_products_list.dart';
 import 'package:flutter/material.dart';
 
 class OrderProductsView extends StatelessWidget {
@@ -10,7 +11,9 @@ class OrderProductsView extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(title: Text("Añadir productos")),
       drawer: OrderNavigationDrawer(),
-      body: const Placeholder(),
+      body:
+      // const Placeholder(),
+      Center(child: OrderProductsList()),
     );
   }
 }

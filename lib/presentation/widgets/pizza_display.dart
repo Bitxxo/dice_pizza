@@ -4,7 +4,8 @@ import 'package:flutter/material.dart';
 
 class PizzaDisplay extends StatelessWidget {
   final Pizza pizza;
-  const PizzaDisplay(this.pizza, {super.key});
+  final int index;
+  const PizzaDisplay(this.pizza, this.index, {super.key});
 
   @override
   Widget build(BuildContext context) {

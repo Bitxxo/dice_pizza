@@ -14,6 +14,6 @@ class OrderProductsList extends StatelessWidget {
         Ingredient(IngredientName.pina),
       },
     );
-    return PizzaDisplay(pizza);
+    return PizzaDisplay(pizza, 1);
   }
 }

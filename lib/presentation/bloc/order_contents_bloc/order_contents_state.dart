@@ -4,7 +4,7 @@ part of 'order_contents_bloc.dart';
 class OrderContentsState extends Equatable {
   final Map<int, Pizza> order;
 
-  const OrderContentsState({this.order = const {}});
+  const OrderContentsState({required this.order});
 
   @override
   List<Object?> get props => [order];
@@ -13,12 +13,19 @@ class OrderContentsState extends Equatable {
       OrderContentsState(order: order ?? this.order);
 }
 
-class OrderContentsInitial extends OrderContentsState {}
+class OrderContentsInitial extends OrderContentsState {
+  const OrderContentsInitial() : super(order: const {});
+}
 
-class OrderContentsLoading extends OrderContentsState {}
+class OrderContentsLoading extends OrderContentsState {
+  const OrderContentsLoading({required super.order});
+}
 
 class OrderContentsError extends OrderContentsState {
   final String errorMessage;
 
-  const OrderContentsError({this.errorMessage = 'Unknown Error'});
+  const OrderContentsError({
+    this.errorMessage = 'Unknown Error',
+    required super.order,
+  });
 }

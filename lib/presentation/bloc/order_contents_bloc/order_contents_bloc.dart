@@ -17,24 +17,29 @@ class OrderContentsBloc extends Bloc<OrderContentsEvent, OrderContentsState> {
 
   ///Añade una pizza al pedido
   void _onPizzaAdded(event, emit) {
-    emit(OrderContentsLoading());
-    final Map<int, Pizza> editedOrder = state.order;
-    editedOrder.addAll({state.order.length: event.pizza});
-    emit(OrderContentsState(order: editedOrder));
+    if (state is OrderContentsInitial) {
+      setLoading(emit);
+      emit(OrderContentsState(order: {1: event.pizza}));
+    } else {
+      setLoading(emit);
+      Map<int, Pizza> editedOrder = state.order;
+      editedOrder[editedOrder.length + 1] = event.pizza;
+      emit(OrderContentsState(order: editedOrder));
+    }
   }
 
   ///Elimina una pizza del pedido
   void _onPizzaRemoved(event, emit) {
-    emit(OrderContentsLoading());
-    final Map<int, Pizza> editedOrder = state.order;
+    setLoading(emit);
+    Map<int, Pizza> editedOrder = state.order;
     editedOrder.removeWhere((index, product) => index == event.id);
     emit(OrderContentsState(order: editedOrder));
   }
 
   ///Modifica una pizza ya presente en el pedido
   void _onPizzaEdited(event, emit) {
-    emit(OrderContentsLoading());
-    final Map<int, Pizza> editedOrder = state.order;
+    setLoading(emit);
+    Map<int, Pizza> editedOrder = state.order;
     editedOrder[event.id] = event.pizza;
     emit(OrderContentsState(order: editedOrder));
   }
@@ -46,5 +51,9 @@ class OrderContentsBloc extends Bloc<OrderContentsEvent, OrderContentsState> {
       newMap.addAll({newMap.length: pizza});
     }
     return newMap;
+  }
+
+  void setLoading(emit) {
+    emit(OrderContentsLoading(order: state.order));
   }
 }

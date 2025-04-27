@@ -1,7 +1,8 @@
 import 'package:dice_pizza/domain/entities/ingredient.dart';
 import 'package:flutter/material.dart';
 
-typedef AddIngredient = void Function(IngredientName name);
+typedef AddIngredient =
+    void Function(IngredientName name, BuildContext context);
 
 class IngredientTypeButton extends StatelessWidget {
   const IngredientTypeButton(this.name, this.addIngredient, {super.key});
@@ -16,7 +17,7 @@ class IngredientTypeButton extends StatelessWidget {
         width: 150,
         height: 150,
         child: InkWell(
-          onTap: () => addIngredient(name),
+          onTap: () => addIngredient(name, context),
           child: Text(name.value),
         ),
       ),

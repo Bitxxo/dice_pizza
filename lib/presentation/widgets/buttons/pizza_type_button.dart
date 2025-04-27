@@ -1,7 +1,9 @@
 import 'package:dice_pizza/domain/entities/pizza.dart';
+import 'package:dice_pizza/presentation/bloc/order_contents_bloc/order_contents_bloc.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
-typedef AddProduct = void Function(Pizza pizza);
+typedef AddProduct = void Function(Pizza pizza, BuildContext context);
 
 class PizzaTypeButton extends StatelessWidget {
   const PizzaTypeButton(this.type, this.addPizza, {super.key});
@@ -11,12 +13,12 @@ class PizzaTypeButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final Pizza pizza = Pizza();
-    return DecoratedBox(
-      decoration: BoxDecoration(color: Colors.lightBlue.shade100),
-      child: SizedBox(
-        width: 150,
-        height: 150,
-        child: InkWell(onTap: () => addPizza(pizza), child: Text(type.name)),
+    return SizedBox(
+      width: 100,
+      height: 100,
+      child: InkWell(
+        onTap: () => addPizza(pizza, context),
+        child: Center(child: Text(type.name)),
       ),
     );
   }

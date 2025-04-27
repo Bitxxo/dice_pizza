@@ -17,40 +17,30 @@ GoRouter _router({GoRouterRedirect? redirect}) => GoRouter(
   routes: _routes,
 );
 
-List<GoRoute> _routes = [
+List<RouteBase> _routes = [
   GoRoute(
     path: '/',
     name: HomeScreen.name,
     builder: (context, state) => const HomeScreen(),
+    routes: _orderCreationFlow,
+  ),
+];
+
+List<RouteBase> _orderCreationFlow = [
+  ShellRoute(
+    builder: (context, state, child) => OrderScreen(child, null),
     routes: [
       GoRoute(
-        path: 'order',
-        name: OrderScreen.name,
-        builder: (context, state) => OrderScreen(),
-        routes: [
-          GoRoute(
-            path: '/customer',
-            name: OrderCustomerView.name,
-            builder: (context, state) => const OrderCustomerView(),
-          ),
-          GoRoute(
-            path: '/products',
-            name: OrderProductsView.name,
-            builder: (context, state) => const OrderProductsView(),
-          ),
-          /*
-          GoRoute(
-            path: '/ingredients',
-            name: OrderProductsView.name,
-            builder: (context, state) => const OrderProductsView(),
-          ),
-          */
-          GoRoute(
-            path: '/payment',
-            name: OrderPaymentView.name,
-            builder: (context, state) => const OrderPaymentView(),
-          ),
-        ],
+        path: '/order/customer',
+        builder: (context, state) => const OrderCustomerView(),
+      ),
+      GoRoute(
+        path: '/order/products',
+        builder: (context, state) => const OrderProductsView(),
+      ),
+      GoRoute(
+        path: '/order/payment',
+        builder: (context, state) => const OrderPaymentView(),
       ),
     ],
   ),

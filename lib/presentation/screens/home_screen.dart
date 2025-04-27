@@ -12,7 +12,7 @@ class HomeScreen extends StatelessWidget {
       body: Center(
         child: FilledButton(
           onPressed: () {
-            context.push(RouterPaths.order);
+            context.push(RouterPaths.products);
           },
           child: Text("Crear pedido"),
         ),

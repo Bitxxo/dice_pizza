@@ -11,7 +11,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class OrderScreen extends ConsumerWidget {
   static const name = "CreateOrder";
-  const OrderScreen({super.key});
+  const OrderScreen(this.child, this.orderId, {super.key});
+  final Widget? child;
+  final int? orderId;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -22,11 +24,10 @@ class OrderScreen extends ConsumerWidget {
     };
 
     return BlocProvider(
-      //para inyectar el bloc
       create: (context) => OrderContentsBloc(),
       child: Scaffold(
         drawer: OrderNavigationDrawer(),
-        body: Center(child: view),
+        body: Center(child: child ?? Placeholder()),
       ),
     );
   }

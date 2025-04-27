@@ -1,10 +1,12 @@
 import 'package:dice_pizza/config/router/navigation_constants.dart';
 import 'package:dice_pizza/config/router/router_provider.dart';
+import 'package:dice_pizza/presentation/bloc/order_contents_bloc/order_contents_bloc.dart';
 import 'package:dice_pizza/presentation/views/order_customer_view.dart';
 import 'package:dice_pizza/presentation/views/order_payment_view.dart';
 import 'package:dice_pizza/presentation/views/order_products_view.dart';
 import 'package:dice_pizza/presentation/widgets/order_navigation_drawer.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class OrderScreen extends ConsumerWidget {
@@ -19,6 +21,13 @@ class OrderScreen extends ConsumerWidget {
       RouterPaths.customer || String() || null => OrderCustomerView(),
     };
 
-    return Scaffold(drawer: OrderNavigationDrawer(), body: Center(child: view));
+    return BlocProvider(
+      //para inyectar el bloc
+      create: (context) => OrderContentsBloc(),
+      child: Scaffold(
+        drawer: OrderNavigationDrawer(),
+        body: Center(child: view),
+      ),
+    );
   }
 }

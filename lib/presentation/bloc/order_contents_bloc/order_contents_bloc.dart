@@ -15,7 +15,36 @@ class OrderContentsBloc extends Bloc<OrderContentsEvent, OrderContentsState> {
     on<PizzaEdited>((event, emit) => _onPizzaEdited(event, emit));
   }
 
-  void _onPizzaAdded(event, emit) {}
-  void _onPizzaRemoved(event, emit) {}
-  void _onPizzaEdited(event, emit) {}
+  ///Añade una pizza al pedido
+  void _onPizzaAdded(event, emit) {
+    emit(OrderContentsLoading());
+    final Map<int, Pizza> editedOrder = state.order;
+    editedOrder.addAll({state.order.length: event.pizza});
+    emit(OrderContentsState(order: editedOrder));
+  }
+
+  ///Elimina una pizza del pedido
+  void _onPizzaRemoved(event, emit) {
+    emit(OrderContentsLoading());
+    final Map<int, Pizza> editedOrder = state.order;
+    editedOrder.removeWhere((index, product) => index == event.id);
+    emit(OrderContentsState(order: editedOrder));
+  }
+
+  ///Modifica una pizza ya presente en el pedido
+  void _onPizzaEdited(event, emit) {
+    emit(OrderContentsLoading());
+    final Map<int, Pizza> editedOrder = state.order;
+    editedOrder[event.id] = event.pizza;
+    emit(OrderContentsState(order: editedOrder));
+  }
+
+  ///Reordena el map que representa el pedido
+  Map<int, Pizza> rearrange(Map<int, Pizza> currentOrder) {
+    Map<int, Pizza> newMap = {};
+    for (Pizza pizza in currentOrder.values) {
+      newMap.addAll({newMap.length: pizza});
+    }
+    return newMap;
+  }
 }

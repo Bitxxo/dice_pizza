@@ -1,19 +1,40 @@
 import 'package:dice_pizza/domain/entities/ingredient.dart';
 import 'package:dice_pizza/domain/entities/pizza.dart';
+import 'package:dice_pizza/presentation/bloc/order_contents_bloc/order_contents_bloc.dart';
+import 'package:dice_pizza/presentation/widgets/error_message_display.dart';
+import 'package:dice_pizza/presentation/widgets/loading_box.dart';
 import 'package:dice_pizza/presentation/widgets/pizza_display.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class OrderProductsList extends StatelessWidget {
   const OrderProductsList({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final OrderContentsState state = context.watch<OrderContentsBloc>().state;
+
     final pizza = Pizza(
       ingredients: {
         Ingredient(IngredientName.bacon),
         Ingredient(IngredientName.pina),
       },
     );
-    return PizzaDisplay(pizza, 1);
+
+    if (state is OrderContentsLoading) {
+      final placeholders = state.order.length;
+      return Row(
+        children: [for (int i = 0; i < placeholders; i++) LoadingBox()],
+      );
+    } else if (state is OrderContentsError) {
+      return ErrorMessageDisplay(
+        message: state.errorMessage,
+        title: 'Error al cargar el pedido ',
+      );
+    } else {
+      return Row(
+        children: [for (int i in state.order.keys) PizzaDisplay(pizza, i)],
+      );
+    }
   }
 }

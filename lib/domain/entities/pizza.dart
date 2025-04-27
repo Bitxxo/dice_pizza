@@ -12,3 +12,5 @@ class Pizza {
     ingredients.remove(ingredient);
   }
 }
+
+enum PizzaTypes { margarita, barbacoa, vegetal, hawaiana }

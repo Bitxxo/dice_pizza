@@ -11,7 +11,7 @@ class OrderProductsList extends StatelessWidget {
     final pizza = Pizza(
       ingredients: {
         Ingredient(IngredientName.bacon),
-        Ingredient(IngredientName.cebolla),
+        Ingredient(IngredientName.pina),
       },
     );
     return PizzaDisplay(pizza);

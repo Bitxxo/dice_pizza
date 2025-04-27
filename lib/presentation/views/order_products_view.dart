@@ -1,3 +1,4 @@
+import 'package:dice_pizza/presentation/views/order_products_type_selection.dart';
 import 'package:dice_pizza/presentation/widgets/order_navigation_drawer.dart';
 import 'package:dice_pizza/presentation/widgets/order_products_list.dart';
 import 'package:flutter/material.dart';
@@ -13,7 +14,11 @@ class OrderProductsView extends StatelessWidget {
       drawer: OrderNavigationDrawer(),
       body:
       // const Placeholder(),
-      Center(child: OrderProductsList()),
+      Center(
+        child: Column(
+          children: [OrderProductsList(), OrderProductsTypeSelection()],
+        ),
+      ),
     );
   }
 }

@@ -22,8 +22,8 @@ class PizzaDisplay extends StatelessWidget {
                   Spacer(),
                   for (Ingredient i in pizza.ingredients)
                     i.isDouble
-                        ? Text("Doble de ${i.type.name}")
-                        : Text(i.type.name),
+                        ? Text("Doble de ${i.type.value}")
+                        : Text(i.type.value),
                   Spacer(),
                 ],
               ),

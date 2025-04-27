@@ -1,4 +1,3 @@
-import 'package:dice_pizza/presentation/widgets/order_navigation_drawer.dart';
 import 'package:flutter/material.dart';
 
 class OrderCustomerView extends StatelessWidget {
@@ -9,7 +8,6 @@ class OrderCustomerView extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: Text("Datos del cliente")),
-      drawer: OrderNavigationDrawer(),
       body: const Placeholder(),
     );
   }

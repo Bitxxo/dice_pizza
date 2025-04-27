@@ -16,7 +16,7 @@ class PizzaDisplay extends StatelessWidget {
         children: [
           Text("Pizza"),
           pizza.ingredients.isEmpty
-              ? const SizedBox()
+              ? const SizedBox(width: 200, height: 200)
               : Row(
                 spacing: 20,
                 children: [

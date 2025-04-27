@@ -1,0 +1,37 @@
+import 'package:dice_pizza/config/router/navigation_constants.dart';
+import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+
+enum OrderNavigationViews { customer, products, payment }
+
+class OrderBottomNavigation extends StatelessWidget {
+  const OrderBottomNavigation(this.view, {super.key});
+  final OrderNavigationViews view;
+
+  @override
+  Widget build(BuildContext context) {
+    return BottomNavigationBar(
+      onTap: (index) => onDestinationSelected(index, context),
+      currentIndex: view.index,
+      items: [
+        BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Cliente'),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.local_pizza),
+          label: 'Productos',
+        ),
+        BottomNavigationBarItem(icon: Icon(Icons.attach_money), label: 'Pago'),
+      ],
+    );
+  }
+
+  void onDestinationSelected(int index, BuildContext context) {
+    switch (index) {
+      case 0:
+        context.push(RouterPaths.customer);
+      case 1:
+        context.push(RouterPaths.products);
+      case 2:
+        context.push(RouterPaths.payment);
+    }
+  }
+}

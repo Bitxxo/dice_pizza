@@ -1,8 +1,8 @@
 import 'package:dice_pizza/domain/entities/ingredient.dart';
 import 'package:dice_pizza/domain/entities/pizza.dart';
 import 'package:dice_pizza/presentation/bloc/order_contents_bloc/order_contents_bloc.dart';
-import 'package:dice_pizza/presentation/widgets/error_message_display.dart';
-import 'package:dice_pizza/presentation/widgets/loading_box.dart';
+import 'package:dice_pizza/presentation/widgets/shared/error_message_display.dart';
+import 'package:dice_pizza/presentation/widgets/shared/loading_box.dart';
 import 'package:dice_pizza/presentation/widgets/pizza_display.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';

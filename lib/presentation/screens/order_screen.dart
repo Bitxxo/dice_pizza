@@ -1,10 +1,8 @@
-import 'package:dice_pizza/config/router/navigation_constants.dart';
-import 'package:dice_pizza/config/router/router_provider.dart';
 import 'package:dice_pizza/presentation/bloc/order_contents_bloc/order_contents_bloc.dart';
 import 'package:dice_pizza/presentation/views/order_customer_view.dart';
 import 'package:dice_pizza/presentation/views/order_payment_view.dart';
 import 'package:dice_pizza/presentation/views/order_products_view.dart';
-import 'package:dice_pizza/presentation/widgets/order_navigation_drawer.dart';
+import 'package:dice_pizza/presentation/widgets/order_bottom_navigation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -17,18 +15,23 @@ class OrderScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final Widget view = switch (ref.watch(routerProvider).state.fullPath) {
-      RouterPaths.products => OrderProductsView(),
-      RouterPaths.payment => OrderPaymentView(),
-      RouterPaths.customer || String() || null => OrderCustomerView(),
-    };
-
     return BlocProvider(
       create: (context) => OrderContentsBloc(),
       child: Scaffold(
-        drawer: OrderNavigationDrawer(),
+        bottomNavigationBar: OrderBottomNavigation(currentView()),
         body: Center(child: child ?? Placeholder()),
       ),
     );
+  }
+
+  OrderNavigationViews currentView() {
+    if (child is OrderCustomerView) {
+      return OrderNavigationViews.customer;
+    } else if (child is OrderPaymentView) {
+      return OrderNavigationViews.payment;
+    } else if (child is OrderProductsView) {
+      return OrderNavigationViews.products;
+    }
+    return OrderNavigationViews.payment;
   }
 }

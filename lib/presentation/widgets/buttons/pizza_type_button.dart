@@ -1,7 +1,5 @@
 import 'package:dice_pizza/domain/entities/pizza.dart';
-import 'package:dice_pizza/presentation/bloc/order_contents_bloc/order_contents_bloc.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
 
 typedef AddProduct = void Function(Pizza pizza, BuildContext context);
 

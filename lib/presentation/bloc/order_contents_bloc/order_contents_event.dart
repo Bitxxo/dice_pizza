@@ -1,12 +1,22 @@
 part of 'order_contents_bloc.dart';
 
 @immutable
-sealed class OrderContentsEvent {}
+sealed class OrderContentsEvent {
+  const OrderContentsEvent();
+}
 
-final class Initial extends OrderContentsEvent {}
+final class PizzaAdded extends OrderContentsEvent {
+  final Pizza pizza;
+  const PizzaAdded(this.pizza);
+}
 
-final class PizzaAdded extends OrderContentsEvent {}
+final class PizzaRemoved extends OrderContentsEvent {
+  final int id;
+  const PizzaRemoved(this.id);
+}
 
-final class PizzaRemoved extends OrderContentsEvent {}
-
-final class PizzaEdited extends OrderContentsEvent {}
+final class PizzaEdited extends OrderContentsEvent {
+  final int id;
+  final Pizza pizza;
+  const PizzaEdited(this.pizza, this.id);
+}

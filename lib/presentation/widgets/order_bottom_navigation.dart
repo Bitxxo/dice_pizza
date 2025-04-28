@@ -5,14 +5,13 @@ import 'package:go_router/go_router.dart';
 enum OrderNavigationViews { customer, products, payment }
 
 class OrderBottomNavigation extends StatelessWidget {
-  const OrderBottomNavigation(this.view, {super.key});
-  final OrderNavigationViews view;
+  const OrderBottomNavigation({super.key});
 
   @override
   Widget build(BuildContext context) {
     return BottomNavigationBar(
       onTap: (index) => onDestinationSelected(index, context),
-      currentIndex: view.index,
+      currentIndex: getCurrentIndex(context),
       items: [
         BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Cliente'),
         BottomNavigationBarItem(
@@ -22,6 +21,20 @@ class OrderBottomNavigation extends StatelessWidget {
         BottomNavigationBarItem(icon: Icon(Icons.attach_money), label: 'Pago'),
       ],
     );
+  }
+
+  int getCurrentIndex(BuildContext context) {
+    final route = GoRouter.of(context).state.fullPath;
+    switch (route) {
+      case RouterPaths.customer:
+        return 0;
+      case RouterPaths.products:
+        return 1;
+      case RouterPaths.payment:
+        return 2;
+      default:
+        return 1;
+    }
   }
 
   void onDestinationSelected(int index, BuildContext context) {

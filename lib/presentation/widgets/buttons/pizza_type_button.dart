@@ -11,13 +11,20 @@ class PizzaTypeButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final Pizza pizza = Pizza();
-    return SizedBox(
+    return FilledButton.tonal(
+      onPressed: () => addPizza(pizza, context),
+      child: Text(type.name),
+    )
+    /*
+    SizedBox(
       width: 100,
       height: 100,
       child: InkWell(
         onTap: () => addPizza(pizza, context),
         child: Center(child: Text(type.name)),
       ),
-    );
+    )
+    */
+    ;
   }
 }

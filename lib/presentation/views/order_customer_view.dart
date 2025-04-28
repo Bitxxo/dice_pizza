@@ -1,3 +1,4 @@
+import 'package:dice_pizza/presentation/widgets/order_back_button.dart';
 import 'package:flutter/material.dart';
 
 class OrderCustomerView extends StatelessWidget {
@@ -7,7 +8,10 @@ class OrderCustomerView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Datos del cliente")),
+      appBar: AppBar(
+        title: Text("Datos del cliente"),
+        leading: OrderBackButton(),
+      ),
       body: const Placeholder(),
     );
   }

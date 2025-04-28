@@ -3,7 +3,7 @@ import 'package:dice_pizza/domain/entities/pizza.dart';
 import 'package:dice_pizza/presentation/bloc/order_contents_bloc/order_contents_bloc.dart';
 import 'package:dice_pizza/presentation/widgets/shared/error_message_display.dart';
 import 'package:dice_pizza/presentation/widgets/shared/loading_box.dart';
-import 'package:dice_pizza/presentation/widgets/pizza_display.dart';
+import 'package:dice_pizza/presentation/widgets/product/pizza_display.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -32,8 +32,17 @@ class OrderProductsList extends StatelessWidget {
         title: 'Error al cargar el pedido ',
       );
     } else {
-      return Row(
-        children: [for (int i in state.order.keys) PizzaDisplay(pizza, i)],
+      return SizedBox(
+        height: 250,
+        child: SingleChildScrollView(
+          padding: EdgeInsets.all(10),
+          scrollDirection: Axis.horizontal,
+          physics: BouncingScrollPhysics(),
+          child: Row(
+            spacing: 10,
+            children: [for (int i in state.order.keys) PizzaDisplay(pizza, i)],
+          ),
+        ),
       );
     }
   }

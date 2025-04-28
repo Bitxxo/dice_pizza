@@ -9,12 +9,17 @@ class OrderProductsTypeSelection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      spacing: 20,
-      children: [
-        for (PizzaTypes type in PizzaTypes.values)
-          PizzaTypeButton(type, addPizza),
-      ],
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(15.0),
+        child: Row(
+          spacing: 20,
+          children: [
+            for (PizzaTypes type in PizzaTypes.values)
+              PizzaTypeButton(type, addPizza),
+          ],
+        ),
+      ),
     );
   }
 

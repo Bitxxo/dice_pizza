@@ -10,7 +10,7 @@ class OrderNavigationDrawer extends StatelessWidget {
   void onDestinationSelected(int index, BuildContext context) {
     switch (index) {
       case 0:
-        context.push(RouterPaths.customer);
+        context.push(RouterPaths.ingredients);
       case 1:
         context.push(RouterPaths.products);
       case 2:

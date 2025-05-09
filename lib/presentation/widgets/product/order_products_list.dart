@@ -14,12 +14,7 @@ class OrderProductsList extends StatelessWidget {
   Widget build(BuildContext context) {
     final OrderContentsState state = context.watch<OrderContentsBloc>().state;
 
-    final pizza = Pizza(
-      ingredients: {
-        Ingredient(IngredientName.bacon),
-        Ingredient(IngredientName.pina),
-      },
-    );
+    final pizza = Pizza(ingredients: [Ingredient.bacon, Ingredient.pina]);
 
     if (state is OrderContentsLoading) {
       final placeholders = state.order.length;
@@ -36,6 +31,7 @@ class OrderProductsList extends StatelessWidget {
         height: 250,
         child: SingleChildScrollView(
           padding: EdgeInsets.all(10),
+          reverse: true,
           scrollDirection: Axis.horizontal,
           physics: BouncingScrollPhysics(),
           child: Row(

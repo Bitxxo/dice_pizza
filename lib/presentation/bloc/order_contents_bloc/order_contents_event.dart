@@ -20,3 +20,9 @@ final class PizzaEdited extends OrderContentsEvent {
   final Pizza pizza;
   const PizzaEdited(this.pizza, this.id);
 }
+
+final class IngredientToggled extends OrderContentsEvent {
+  final Ingredient ingredient;
+  final int id;
+  const IngredientToggled(this.ingredient, this.id);
+}

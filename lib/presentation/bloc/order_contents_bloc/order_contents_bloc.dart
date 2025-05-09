@@ -1,4 +1,5 @@
 import 'package:bloc/bloc.dart';
+import 'package:dice_pizza/domain/entities/ingredient.dart';
 import 'package:dice_pizza/domain/entities/pizza.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
@@ -13,6 +14,7 @@ class OrderContentsBloc extends Bloc<OrderContentsEvent, OrderContentsState> {
     on<PizzaAdded>((event, emit) => _onPizzaAdded(event, emit));
     on<PizzaRemoved>((event, emit) => _onPizzaRemoved(event, emit));
     on<PizzaEdited>((event, emit) => _onPizzaEdited(event, emit));
+    on<IngredientToggled>((event, emit) => _onIngredientToggled(event, emit));
   }
 
   ///Añade una pizza al pedido
@@ -33,6 +35,7 @@ class OrderContentsBloc extends Bloc<OrderContentsEvent, OrderContentsState> {
     setLoading(emit);
     Map<int, Pizza> editedOrder = state.order;
     editedOrder.removeWhere((index, product) => index == event.id);
+    editedOrder = rearrange(editedOrder);
     emit(OrderContentsState(order: editedOrder));
   }
 
@@ -41,6 +44,25 @@ class OrderContentsBloc extends Bloc<OrderContentsEvent, OrderContentsState> {
     setLoading(emit);
     Map<int, Pizza> editedOrder = state.order;
     editedOrder[event.id] = event.pizza;
+    emit(OrderContentsState(order: editedOrder));
+  }
+
+  //Elimina un ingrediente a una pizza del pedido
+  void _onIngredientToggled(event, emit) {
+    setLoading(emit);
+    Map<int, Pizza> editedOrder = state.order;
+    Pizza? editedPizza = editedOrder[event.id];
+    if (editedPizza == null) {
+      emit(
+        OrderContentsError(order: state.order, errorMessage: 'Pizza not found'),
+      );
+      return;
+    } else if (editedPizza.ingredients.contains(event.ingredient)) {
+      editedPizza.removeIngredient(event.ingredient);
+    } else if (!editedPizza.ingredients.contains(event.ingredient)) {
+      editedPizza.addIngredient(event.ingredient);
+    }
+    editedOrder[event.id] = editedPizza;
     emit(OrderContentsState(order: editedOrder));
   }
 

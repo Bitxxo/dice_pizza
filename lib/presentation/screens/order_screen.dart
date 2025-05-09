@@ -15,7 +15,10 @@ class OrderScreen extends StatelessWidget {
       create: (context) => OrderContentsBloc(),
       child: Scaffold(
         bottomNavigationBar: OrderBottomNavigation(),
-        body: Center(child: child ?? Placeholder()),
+        body: Padding(
+          padding: EdgeInsets.all(10),
+          child: Center(child: child ?? Placeholder()),
+        ),
       ),
     );
   }

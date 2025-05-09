@@ -30,12 +30,12 @@ class PizzaDisplay extends StatelessWidget {
                     children: [
                       Spacer(),
                       for (Ingredient i in pizza.ingredients)
-                        i.isDouble
-                            ? Text("Doble de ${i.type.value}")
-                            : Text(i.type.value),
+                        Text(i.value, overflow: TextOverflow.visible),
                       Spacer(),
                     ],
                   ),
+              Spacer(),
+              Text('${pizza.price}€'),
             ],
           ),
         ),

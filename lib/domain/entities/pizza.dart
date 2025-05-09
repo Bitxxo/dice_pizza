@@ -1,15 +1,39 @@
 import 'package:dice_pizza/domain/entities/ingredient.dart';
+import 'package:isar/isar.dart';
 
+part 'pizza.g.dart';
+
+@collection
 class Pizza {
-  Set<Ingredient> ingredients;
-  Pizza({this.ingredients = const {}});
+  Id id = Isar.autoIncrement;
+
+  @Enumerated(EnumType.name)
+  List<Ingredient> ingredients;
+
+  int price;
+  Pizza({this.ingredients = const [], this.price = 2});
 
   void addIngredient(Ingredient ingredient) {
-    ingredients.add(ingredient);
+    if (!ingredients.contains(ingredient)) {
+      ingredients.add(ingredient);
+    } else {
+      return;
+    }
   }
 
   void removeIngredient(Ingredient ingredient) {
-    ingredients.remove(ingredient);
+    if (ingredients.contains(ingredient)) {
+      ingredients.remove(ingredient);
+    } else {
+      return;
+    }
+  }
+
+  Pizza copyWith({List<Ingredient>? ingredients, int? price}) {
+    return Pizza(
+      ingredients: ingredients ?? this.ingredients,
+      price: price ?? this.price,
+    );
   }
 }
 

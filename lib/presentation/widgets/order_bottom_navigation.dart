@@ -13,7 +13,10 @@ class OrderBottomNavigation extends StatelessWidget {
       onTap: (index) => onDestinationSelected(index, context),
       currentIndex: getCurrentIndex(context),
       items: [
-        BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Cliente'),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.kebab_dining),
+          label: 'Ingredientes',
+        ),
         BottomNavigationBarItem(
           icon: Icon(Icons.local_pizza),
           label: 'Productos',
@@ -26,7 +29,7 @@ class OrderBottomNavigation extends StatelessWidget {
   int getCurrentIndex(BuildContext context) {
     final route = GoRouter.of(context).state.fullPath;
     switch (route) {
-      case RouterPaths.customer:
+      case RouterPaths.ingredients:
         return 0;
       case RouterPaths.products:
         return 1;
@@ -40,7 +43,7 @@ class OrderBottomNavigation extends StatelessWidget {
   void onDestinationSelected(int index, BuildContext context) {
     switch (index) {
       case 0:
-        context.push(RouterPaths.customer);
+        context.push(RouterPaths.ingredients);
       case 1:
         context.push(RouterPaths.products);
       case 2:

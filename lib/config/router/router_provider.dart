@@ -1,7 +1,7 @@
 import 'package:dice_pizza/config/router/navigation_constants.dart';
 import 'package:dice_pizza/presentation/screens/home_screen.dart';
 import 'package:dice_pizza/presentation/screens/order_screen.dart';
-import 'package:dice_pizza/presentation/views/order_customer_view.dart';
+import 'package:dice_pizza/presentation/views/order_ingredient_view.dart';
 import 'package:dice_pizza/presentation/views/order_payment_view.dart';
 import 'package:dice_pizza/presentation/views/order_products_view.dart';
 import 'package:go_router/go_router.dart';
@@ -31,8 +31,8 @@ List<RouteBase> _orderCreationFlow = [
     builder: (context, state, child) => OrderScreen(child, null),
     routes: [
       GoRoute(
-        path: '/order/customer',
-        builder: (context, state) => const OrderCustomerView(),
+        path: '/order/ingredients',
+        builder: (context, state) => const OrderIngredientView(),
       ),
       GoRoute(
         path: '/order/products',

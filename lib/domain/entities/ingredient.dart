@@ -1,14 +1,7 @@
-class Ingredient {
-  final bool isDouble;
-  final IngredientName type;
-
-  Ingredient(this.type, {this.isDouble = false});
-}
-
-enum IngredientName { mozzarella, bacon, atun, cebolla, pina }
+enum Ingredient { mozzarella, bacon, atun, cebolla, pina }
 
 //porque los enum no permiten ciertos caracteres
-extension NameCorrections on IngredientName {
+extension NameCorrections on Ingredient {
   String get value {
     switch (name) {
       case 'pina':

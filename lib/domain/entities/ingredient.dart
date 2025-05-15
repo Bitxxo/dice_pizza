@@ -1,4 +1,17 @@
-enum Ingredient { mozzarella, bacon, atun, cebolla, pina }
+import 'package:json_annotation/json_annotation.dart';
+
+enum Ingredient {
+  @JsonValue('mozzarella')
+  mozzarella,
+  @JsonValue('bacon')
+  bacon,
+  @JsonValue('atun')
+  atun,
+  @JsonValue('cebolla')
+  cebolla,
+  @JsonValue('pina')
+  pina,
+}
 
 //porque los enum no permiten ciertos caracteres
 extension NameCorrections on Ingredient {

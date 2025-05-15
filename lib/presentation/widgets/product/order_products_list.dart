@@ -13,8 +13,7 @@ class OrderProductsList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final OrderContentsState state = context.watch<OrderContentsBloc>().state;
-
-    final pizza = Pizza(ingredients: [Ingredient.bacon, Ingredient.pina]);
+    final pizza = Pizza(0, ingredients: [Ingredient.bacon, Ingredient.pina]);
 
     if (state is OrderContentsLoading) {
       final placeholders = state.order.length;
@@ -36,7 +35,15 @@ class OrderProductsList extends StatelessWidget {
           physics: BouncingScrollPhysics(),
           child: Row(
             spacing: 10,
-            children: [for (int i in state.order.keys) PizzaDisplay(pizza, i)],
+            children: [
+              for (int i in state.order.keys)
+                InkWell(
+                  onTap: () {
+                    context.read<OrderContentsBloc>().add(PizzaSelected(i));
+                  },
+                  child: PizzaDisplay(pizza, i),
+                ),
+            ],
           ),
         ),
       );

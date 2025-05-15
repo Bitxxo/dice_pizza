@@ -3,14 +3,20 @@ part of 'order_contents_bloc.dart';
 @immutable
 class OrderContentsState extends Equatable {
   final Map<int, Pizza> order;
+  final int selected;
 
-  const OrderContentsState({required this.order});
+  const OrderContentsState({required this.order, this.selected = -1});
 
   @override
   List<Object?> get props => [order];
 
-  OrderContentsState copyWith(final Map<int, Pizza>? order) =>
-      OrderContentsState(order: order ?? this.order);
+  OrderContentsState copyWith({
+    final Map<int, Pizza>? order,
+    final int? selected,
+  }) => OrderContentsState(
+    order: order ?? this.order,
+    selected: selected ?? this.selected,
+  );
 }
 
 class OrderContentsInitial extends OrderContentsState {

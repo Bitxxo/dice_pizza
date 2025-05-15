@@ -1,6 +1,8 @@
 import 'package:dice_pizza/domain/entities/ingredient.dart';
 import 'package:dice_pizza/domain/entities/pizza.dart';
+import 'package:dice_pizza/presentation/bloc/order_contents_bloc/order_contents_bloc.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class PizzaDisplay extends StatelessWidget {
   final Pizza pizza;
@@ -9,8 +11,10 @@ class PizzaDisplay extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final selected = context.watch<OrderContentsBloc>().state.selected;
     return DecoratedBox(
       decoration: BoxDecoration(
+        color: selected == index ? Colors.tealAccent.shade100 : null,
         border: Border.all(),
         borderRadius: BorderRadius.circular(20),
       ),

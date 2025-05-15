@@ -23,8 +23,13 @@ const PizzaSchema = CollectionSchema(
       type: IsarType.stringList,
       enumMap: _PizzaingredientsEnumValueMap,
     ),
-    r'price': PropertySchema(
+    r'orderId': PropertySchema(
       id: 1,
+      name: r'orderId',
+      type: IsarType.long,
+    ),
+    r'price': PropertySchema(
+      id: 2,
       name: r'price',
       type: IsarType.long,
     )
@@ -67,7 +72,8 @@ void _pizzaSerialize(
 ) {
   writer.writeStringList(
       offsets[0], object.ingredients.map((e) => e.name).toList());
-  writer.writeLong(offsets[1], object.price);
+  writer.writeLong(offsets[1], object.orderId);
+  writer.writeLong(offsets[2], object.price);
 }
 
 Pizza _pizzaDeserialize(
@@ -77,13 +83,14 @@ Pizza _pizzaDeserialize(
   Map<Type, List<int>> allOffsets,
 ) {
   final object = Pizza(
+    reader.readLong(offsets[1]),
     ingredients: reader
             .readStringList(offsets[0])
             ?.map((e) =>
                 _PizzaingredientsValueEnumMap[e] ?? Ingredient.mozzarella)
             .toList() ??
         const [],
-    price: reader.readLongOrNull(offsets[1]) ?? 2,
+    price: reader.readLongOrNull(offsets[2]) ?? 2,
   );
   object.id = id;
   return object;
@@ -104,6 +111,8 @@ P _pizzaDeserializeProp<P>(
               .toList() ??
           const []) as P;
     case 1:
+      return (reader.readLong(offset)) as P;
+    case 2:
       return (reader.readLongOrNull(offset) ?? 2) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -484,6 +493,58 @@ extension PizzaQueryFilter on QueryBuilder<Pizza, Pizza, QFilterCondition> {
     });
   }
 
+  QueryBuilder<Pizza, Pizza, QAfterFilterCondition> orderIdEqualTo(int value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'orderId',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Pizza, Pizza, QAfterFilterCondition> orderIdGreaterThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'orderId',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Pizza, Pizza, QAfterFilterCondition> orderIdLessThan(
+    int value, {
+    bool include = false,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'orderId',
+        value: value,
+      ));
+    });
+  }
+
+  QueryBuilder<Pizza, Pizza, QAfterFilterCondition> orderIdBetween(
+    int lower,
+    int upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'orderId',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+      ));
+    });
+  }
+
   QueryBuilder<Pizza, Pizza, QAfterFilterCondition> priceEqualTo(int value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
@@ -542,6 +603,18 @@ extension PizzaQueryObject on QueryBuilder<Pizza, Pizza, QFilterCondition> {}
 extension PizzaQueryLinks on QueryBuilder<Pizza, Pizza, QFilterCondition> {}
 
 extension PizzaQuerySortBy on QueryBuilder<Pizza, Pizza, QSortBy> {
+  QueryBuilder<Pizza, Pizza, QAfterSortBy> sortByOrderId() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'orderId', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Pizza, Pizza, QAfterSortBy> sortByOrderIdDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'orderId', Sort.desc);
+    });
+  }
+
   QueryBuilder<Pizza, Pizza, QAfterSortBy> sortByPrice() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'price', Sort.asc);
@@ -568,6 +641,18 @@ extension PizzaQuerySortThenBy on QueryBuilder<Pizza, Pizza, QSortThenBy> {
     });
   }
 
+  QueryBuilder<Pizza, Pizza, QAfterSortBy> thenByOrderId() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'orderId', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Pizza, Pizza, QAfterSortBy> thenByOrderIdDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'orderId', Sort.desc);
+    });
+  }
+
   QueryBuilder<Pizza, Pizza, QAfterSortBy> thenByPrice() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'price', Sort.asc);
@@ -585,6 +670,12 @@ extension PizzaQueryWhereDistinct on QueryBuilder<Pizza, Pizza, QDistinct> {
   QueryBuilder<Pizza, Pizza, QDistinct> distinctByIngredients() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'ingredients');
+    });
+  }
+
+  QueryBuilder<Pizza, Pizza, QDistinct> distinctByOrderId() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'orderId');
     });
   }
 
@@ -606,6 +697,12 @@ extension PizzaQueryProperty on QueryBuilder<Pizza, Pizza, QQueryProperty> {
       ingredientsProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'ingredients');
+    });
+  }
+
+  QueryBuilder<Pizza, int, QQueryOperations> orderIdProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'orderId');
     });
   }
 

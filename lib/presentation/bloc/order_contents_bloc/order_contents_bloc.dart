@@ -10,11 +10,16 @@ part 'order_contents_state.dart';
 class OrderContentsBloc extends Bloc<OrderContentsEvent, OrderContentsState> {
   OrderContentsBloc() : super(OrderContentsInitial()) {
     on<OrderContentsEvent>((event, emit) {});
-
+    on<PizzaSelected>((event, emit) => _onPizzaSelected(event, emit));
     on<PizzaAdded>((event, emit) => _onPizzaAdded(event, emit));
     on<PizzaRemoved>((event, emit) => _onPizzaRemoved(event, emit));
     on<PizzaEdited>((event, emit) => _onPizzaEdited(event, emit));
     on<IngredientToggled>((event, emit) => _onIngredientToggled(event, emit));
+  }
+
+  //Guarda la pizza seleccionada en el estado
+  void _onPizzaSelected(event, emit) {
+    emit(state.copyWith(selected: event.index));
   }
 
   ///Añade una pizza al pedido
@@ -32,26 +37,32 @@ class OrderContentsBloc extends Bloc<OrderContentsEvent, OrderContentsState> {
 
   ///Elimina una pizza del pedido
   void _onPizzaRemoved(event, emit) {
+    if (!selected(state)) return;
+    final int id = state.selected;
     setLoading(emit);
     Map<int, Pizza> editedOrder = state.order;
-    editedOrder.removeWhere((index, product) => index == event.id);
+    editedOrder.removeWhere((index, product) => index == id);
     editedOrder = rearrange(editedOrder);
     emit(OrderContentsState(order: editedOrder));
   }
 
   ///Modifica una pizza ya presente en el pedido
   void _onPizzaEdited(event, emit) {
+    if (!selected(state)) return;
+    final int id = state.selected;
     setLoading(emit);
     Map<int, Pizza> editedOrder = state.order;
-    editedOrder[event.id] = event.pizza;
+    editedOrder[id] = event.pizza;
     emit(OrderContentsState(order: editedOrder));
   }
 
   //Elimina un ingrediente a una pizza del pedido
   void _onIngredientToggled(event, emit) {
+    if (!selected(state)) return;
+    final int id = state.selected;
     setLoading(emit);
     Map<int, Pizza> editedOrder = state.order;
-    Pizza? editedPizza = editedOrder[event.id];
+    Pizza? editedPizza = editedOrder[id];
     if (editedPizza == null) {
       emit(
         OrderContentsError(order: state.order, errorMessage: 'Pizza not found'),
@@ -62,7 +73,7 @@ class OrderContentsBloc extends Bloc<OrderContentsEvent, OrderContentsState> {
     } else if (!editedPizza.ingredients.contains(event.ingredient)) {
       editedPizza.addIngredient(event.ingredient);
     }
-    editedOrder[event.id] = editedPizza;
+    editedOrder[id] = editedPizza;
     emit(OrderContentsState(order: editedOrder));
   }
 
@@ -77,5 +88,13 @@ class OrderContentsBloc extends Bloc<OrderContentsEvent, OrderContentsState> {
 
   void setLoading(emit) {
     emit(OrderContentsLoading(order: state.order));
+  }
+
+  bool selected(OrderContentsState state) {
+    if (state.selected != null) {
+      return true;
+    } else {
+      return false;
+    }
   }
 }

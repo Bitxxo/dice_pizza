@@ -5,24 +5,26 @@ sealed class OrderContentsEvent {
   const OrderContentsEvent();
 }
 
+final class PizzaSelected extends OrderContentsEvent {
+  final int index;
+  const PizzaSelected(this.index);
+}
+
 final class PizzaAdded extends OrderContentsEvent {
   final Pizza pizza;
   const PizzaAdded(this.pizza);
 }
 
 final class PizzaRemoved extends OrderContentsEvent {
-  final int id;
-  const PizzaRemoved(this.id);
+  const PizzaRemoved();
 }
 
 final class PizzaEdited extends OrderContentsEvent {
-  final int id;
   final Pizza pizza;
-  const PizzaEdited(this.pizza, this.id);
+  const PizzaEdited(this.pizza);
 }
 
 final class IngredientToggled extends OrderContentsEvent {
   final Ingredient ingredient;
-  final int id;
-  const IngredientToggled(this.ingredient, this.id);
+  const IngredientToggled(this.ingredient);
 }

@@ -7,11 +7,13 @@ part 'pizza.g.dart';
 class Pizza {
   Id id = Isar.autoIncrement;
 
+  int orderId;
+
   @Enumerated(EnumType.name)
   List<Ingredient> ingredients;
 
   int price;
-  Pizza({this.ingredients = const [], this.price = 2});
+  Pizza(this.orderId, {this.ingredients = const [], this.price = 2});
 
   void addIngredient(Ingredient ingredient) {
     if (!ingredients.contains(ingredient)) {
@@ -29,8 +31,9 @@ class Pizza {
     }
   }
 
-  Pizza copyWith({List<Ingredient>? ingredients, int? price}) {
+  Pizza copyWith({List<Ingredient>? ingredients, int? price, int? orderId}) {
     return Pizza(
+      orderId ?? this.orderId,
       ingredients: ingredients ?? this.ingredients,
       price: price ?? this.price,
     );

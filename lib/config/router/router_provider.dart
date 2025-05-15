@@ -1,5 +1,6 @@
 import 'package:dice_pizza/config/router/navigation_constants.dart';
 import 'package:dice_pizza/presentation/screens/home_screen.dart';
+import 'package:dice_pizza/presentation/screens/login_screen.dart';
 import 'package:dice_pizza/presentation/screens/order_screen.dart';
 import 'package:dice_pizza/presentation/views/order_ingredient_view.dart';
 import 'package:dice_pizza/presentation/views/order_payment_view.dart';
@@ -13,16 +14,22 @@ final routerProvider = Provider((ref) {
 
 GoRouter _router({GoRouterRedirect? redirect}) => GoRouter(
   redirect: redirect,
-  initialLocation: RouterPaths.home,
+  initialLocation: RouterPaths.login,
   routes: _routes,
 );
 
 List<RouteBase> _routes = [
   GoRoute(
     path: '/',
-    name: HomeScreen.name,
-    builder: (context, state) => const HomeScreen(),
-    routes: _orderCreationFlow,
+    builder: (context, state) => const LoginScreen(),
+    routes: [
+      GoRoute(
+        path: '/home',
+        name: HomeScreen.name,
+        builder: (context, state) => const HomeScreen(),
+        routes: _orderCreationFlow,
+      ),
+    ],
   ),
 ];
 

@@ -3,17 +3,13 @@
 part of 'pizza.dart';
 
 // **************************************************************************
-// IsarCollectionGenerator
+// IsarEmbeddedGenerator
 // **************************************************************************
 
 // coverage:ignore-file
 // ignore_for_file: duplicate_ignore, non_constant_identifier_names, constant_identifier_names, invalid_use_of_protected_member, unnecessary_cast, prefer_const_constructors, lines_longer_than_80_chars, require_trailing_commas, inference_failure_on_function_invocation, unnecessary_parenthesis, unnecessary_raw_strings, unnecessary_null_checks, join_return_with_assignment, prefer_final_locals, avoid_js_rounded_ints, avoid_positional_boolean_parameters, always_specify_types
 
-extension GetPizzaCollection on Isar {
-  IsarCollection<Pizza> get pizzas => this.collection();
-}
-
-const PizzaSchema = CollectionSchema(
+const PizzaSchema = Schema(
   name: r'Pizza',
   id: -5940396934508515181,
   properties: {
@@ -23,13 +19,8 @@ const PizzaSchema = CollectionSchema(
       type: IsarType.stringList,
       enumMap: _PizzaingredientsEnumValueMap,
     ),
-    r'orderId': PropertySchema(
-      id: 1,
-      name: r'orderId',
-      type: IsarType.long,
-    ),
     r'price': PropertySchema(
-      id: 2,
+      id: 1,
       name: r'price',
       type: IsarType.long,
     )
@@ -38,14 +29,6 @@ const PizzaSchema = CollectionSchema(
   serialize: _pizzaSerialize,
   deserialize: _pizzaDeserialize,
   deserializeProp: _pizzaDeserializeProp,
-  idName: r'id',
-  indexes: {},
-  links: {},
-  embeddedSchemas: {},
-  getId: _pizzaGetId,
-  getLinks: _pizzaGetLinks,
-  attach: _pizzaAttach,
-  version: '3.1.0+1',
 );
 
 int _pizzaEstimateSize(
@@ -72,8 +55,7 @@ void _pizzaSerialize(
 ) {
   writer.writeStringList(
       offsets[0], object.ingredients.map((e) => e.name).toList());
-  writer.writeLong(offsets[1], object.orderId);
-  writer.writeLong(offsets[2], object.price);
+  writer.writeLong(offsets[1], object.price);
 }
 
 Pizza _pizzaDeserialize(
@@ -83,16 +65,14 @@ Pizza _pizzaDeserialize(
   Map<Type, List<int>> allOffsets,
 ) {
   final object = Pizza(
-    reader.readLong(offsets[1]),
     ingredients: reader
             .readStringList(offsets[0])
             ?.map((e) =>
                 _PizzaingredientsValueEnumMap[e] ?? Ingredient.mozzarella)
             .toList() ??
         const [],
-    price: reader.readLongOrNull(offsets[2]) ?? 2,
+    price: reader.readLongOrNull(offsets[1]) ?? 2,
   );
-  object.id = id;
   return object;
 }
 
@@ -111,8 +91,6 @@ P _pizzaDeserializeProp<P>(
               .toList() ??
           const []) as P;
     case 1:
-      return (reader.readLong(offset)) as P;
-    case 2:
       return (reader.readLongOrNull(offset) ?? 2) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
@@ -134,146 +112,7 @@ const _PizzaingredientsValueEnumMap = {
   r'pina': Ingredient.pina,
 };
 
-Id _pizzaGetId(Pizza object) {
-  return object.id;
-}
-
-List<IsarLinkBase<dynamic>> _pizzaGetLinks(Pizza object) {
-  return [];
-}
-
-void _pizzaAttach(IsarCollection<dynamic> col, Id id, Pizza object) {
-  object.id = id;
-}
-
-extension PizzaQueryWhereSort on QueryBuilder<Pizza, Pizza, QWhere> {
-  QueryBuilder<Pizza, Pizza, QAfterWhere> anyId() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(const IdWhereClause.any());
-    });
-  }
-}
-
-extension PizzaQueryWhere on QueryBuilder<Pizza, Pizza, QWhereClause> {
-  QueryBuilder<Pizza, Pizza, QAfterWhereClause> idEqualTo(Id id) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(IdWhereClause.between(
-        lower: id,
-        upper: id,
-      ));
-    });
-  }
-
-  QueryBuilder<Pizza, Pizza, QAfterWhereClause> idNotEqualTo(Id id) {
-    return QueryBuilder.apply(this, (query) {
-      if (query.whereSort == Sort.asc) {
-        return query
-            .addWhereClause(
-              IdWhereClause.lessThan(upper: id, includeUpper: false),
-            )
-            .addWhereClause(
-              IdWhereClause.greaterThan(lower: id, includeLower: false),
-            );
-      } else {
-        return query
-            .addWhereClause(
-              IdWhereClause.greaterThan(lower: id, includeLower: false),
-            )
-            .addWhereClause(
-              IdWhereClause.lessThan(upper: id, includeUpper: false),
-            );
-      }
-    });
-  }
-
-  QueryBuilder<Pizza, Pizza, QAfterWhereClause> idGreaterThan(Id id,
-      {bool include = false}) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(
-        IdWhereClause.greaterThan(lower: id, includeLower: include),
-      );
-    });
-  }
-
-  QueryBuilder<Pizza, Pizza, QAfterWhereClause> idLessThan(Id id,
-      {bool include = false}) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(
-        IdWhereClause.lessThan(upper: id, includeUpper: include),
-      );
-    });
-  }
-
-  QueryBuilder<Pizza, Pizza, QAfterWhereClause> idBetween(
-    Id lowerId,
-    Id upperId, {
-    bool includeLower = true,
-    bool includeUpper = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addWhereClause(IdWhereClause.between(
-        lower: lowerId,
-        includeLower: includeLower,
-        upper: upperId,
-        includeUpper: includeUpper,
-      ));
-    });
-  }
-}
-
 extension PizzaQueryFilter on QueryBuilder<Pizza, Pizza, QFilterCondition> {
-  QueryBuilder<Pizza, Pizza, QAfterFilterCondition> idEqualTo(Id value) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'id',
-        value: value,
-      ));
-    });
-  }
-
-  QueryBuilder<Pizza, Pizza, QAfterFilterCondition> idGreaterThan(
-    Id value, {
-    bool include = false,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'id',
-        value: value,
-      ));
-    });
-  }
-
-  QueryBuilder<Pizza, Pizza, QAfterFilterCondition> idLessThan(
-    Id value, {
-    bool include = false,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'id',
-        value: value,
-      ));
-    });
-  }
-
-  QueryBuilder<Pizza, Pizza, QAfterFilterCondition> idBetween(
-    Id lower,
-    Id upper, {
-    bool includeLower = true,
-    bool includeUpper = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'id',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-      ));
-    });
-  }
-
   QueryBuilder<Pizza, Pizza, QAfterFilterCondition> ingredientsElementEqualTo(
     Ingredient value, {
     bool caseSensitive = true,
@@ -493,58 +332,6 @@ extension PizzaQueryFilter on QueryBuilder<Pizza, Pizza, QFilterCondition> {
     });
   }
 
-  QueryBuilder<Pizza, Pizza, QAfterFilterCondition> orderIdEqualTo(int value) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.equalTo(
-        property: r'orderId',
-        value: value,
-      ));
-    });
-  }
-
-  QueryBuilder<Pizza, Pizza, QAfterFilterCondition> orderIdGreaterThan(
-    int value, {
-    bool include = false,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.greaterThan(
-        include: include,
-        property: r'orderId',
-        value: value,
-      ));
-    });
-  }
-
-  QueryBuilder<Pizza, Pizza, QAfterFilterCondition> orderIdLessThan(
-    int value, {
-    bool include = false,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.lessThan(
-        include: include,
-        property: r'orderId',
-        value: value,
-      ));
-    });
-  }
-
-  QueryBuilder<Pizza, Pizza, QAfterFilterCondition> orderIdBetween(
-    int lower,
-    int upper, {
-    bool includeLower = true,
-    bool includeUpper = true,
-  }) {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(FilterCondition.between(
-        property: r'orderId',
-        lower: lower,
-        includeLower: includeLower,
-        upper: upper,
-        includeUpper: includeUpper,
-      ));
-    });
-  }
-
   QueryBuilder<Pizza, Pizza, QAfterFilterCondition> priceEqualTo(int value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
@@ -599,116 +386,3 @@ extension PizzaQueryFilter on QueryBuilder<Pizza, Pizza, QFilterCondition> {
 }
 
 extension PizzaQueryObject on QueryBuilder<Pizza, Pizza, QFilterCondition> {}
-
-extension PizzaQueryLinks on QueryBuilder<Pizza, Pizza, QFilterCondition> {}
-
-extension PizzaQuerySortBy on QueryBuilder<Pizza, Pizza, QSortBy> {
-  QueryBuilder<Pizza, Pizza, QAfterSortBy> sortByOrderId() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'orderId', Sort.asc);
-    });
-  }
-
-  QueryBuilder<Pizza, Pizza, QAfterSortBy> sortByOrderIdDesc() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'orderId', Sort.desc);
-    });
-  }
-
-  QueryBuilder<Pizza, Pizza, QAfterSortBy> sortByPrice() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'price', Sort.asc);
-    });
-  }
-
-  QueryBuilder<Pizza, Pizza, QAfterSortBy> sortByPriceDesc() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'price', Sort.desc);
-    });
-  }
-}
-
-extension PizzaQuerySortThenBy on QueryBuilder<Pizza, Pizza, QSortThenBy> {
-  QueryBuilder<Pizza, Pizza, QAfterSortBy> thenById() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'id', Sort.asc);
-    });
-  }
-
-  QueryBuilder<Pizza, Pizza, QAfterSortBy> thenByIdDesc() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'id', Sort.desc);
-    });
-  }
-
-  QueryBuilder<Pizza, Pizza, QAfterSortBy> thenByOrderId() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'orderId', Sort.asc);
-    });
-  }
-
-  QueryBuilder<Pizza, Pizza, QAfterSortBy> thenByOrderIdDesc() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'orderId', Sort.desc);
-    });
-  }
-
-  QueryBuilder<Pizza, Pizza, QAfterSortBy> thenByPrice() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'price', Sort.asc);
-    });
-  }
-
-  QueryBuilder<Pizza, Pizza, QAfterSortBy> thenByPriceDesc() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addSortBy(r'price', Sort.desc);
-    });
-  }
-}
-
-extension PizzaQueryWhereDistinct on QueryBuilder<Pizza, Pizza, QDistinct> {
-  QueryBuilder<Pizza, Pizza, QDistinct> distinctByIngredients() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'ingredients');
-    });
-  }
-
-  QueryBuilder<Pizza, Pizza, QDistinct> distinctByOrderId() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'orderId');
-    });
-  }
-
-  QueryBuilder<Pizza, Pizza, QDistinct> distinctByPrice() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addDistinctBy(r'price');
-    });
-  }
-}
-
-extension PizzaQueryProperty on QueryBuilder<Pizza, Pizza, QQueryProperty> {
-  QueryBuilder<Pizza, int, QQueryOperations> idProperty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addPropertyName(r'id');
-    });
-  }
-
-  QueryBuilder<Pizza, List<Ingredient>, QQueryOperations>
-      ingredientsProperty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addPropertyName(r'ingredients');
-    });
-  }
-
-  QueryBuilder<Pizza, int, QQueryOperations> orderIdProperty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addPropertyName(r'orderId');
-    });
-  }
-
-  QueryBuilder<Pizza, int, QQueryOperations> priceProperty() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addPropertyName(r'price');
-    });
-  }
-}

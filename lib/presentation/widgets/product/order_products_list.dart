@@ -13,10 +13,10 @@ class OrderProductsList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final OrderContentsState state = context.watch<OrderContentsBloc>().state;
-    final pizza = Pizza(0, ingredients: [Ingredient.bacon, Ingredient.pina]);
+    final pizza = Pizza(ingredients: [Ingredient.bacon, Ingredient.pina]);
 
     if (state is OrderContentsLoading) {
-      final placeholders = state.order.length;
+      final placeholders = state.order.products.length;
       return Row(
         children: [for (int i = 0; i < placeholders; i++) LoadingBox()],
       );
@@ -36,12 +36,12 @@ class OrderProductsList extends StatelessWidget {
           child: Row(
             spacing: 10,
             children: [
-              for (int i in state.order.keys)
+              for (int i = 0; i < state.order.products.length; i++)
                 InkWell(
                   onTap: () {
                     context.read<OrderContentsBloc>().add(PizzaSelected(i));
                   },
-                  child: PizzaDisplay(pizza, i),
+                  child: PizzaDisplay(state.order.products[i], i),
                 ),
             ],
           ),

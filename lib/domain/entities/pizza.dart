@@ -3,17 +3,13 @@ import 'package:isar/isar.dart';
 
 part 'pizza.g.dart';
 
-@collection
+@embedded
 class Pizza {
-  Id id = Isar.autoIncrement;
-
-  int orderId;
-
   @Enumerated(EnumType.name)
   List<Ingredient> ingredients;
 
   int price;
-  Pizza(this.orderId, {this.ingredients = const [], this.price = 2});
+  Pizza({this.ingredients = const [], this.price = 2});
 
   void addIngredient(Ingredient ingredient) {
     if (!ingredients.contains(ingredient)) {
@@ -33,11 +29,20 @@ class Pizza {
 
   Pizza copyWith({List<Ingredient>? ingredients, int? price, int? orderId}) {
     return Pizza(
-      orderId ?? this.orderId,
       ingredients: ingredients ?? this.ingredients,
       price: price ?? this.price,
     );
   }
+
+  factory Pizza.fromJson(Map<String, dynamic> json) => Pizza(
+    ingredients: List<Ingredient>.from(json["ingredients"].map((x) => x)),
+    price: json["price"],
+  );
+
+  Map<String, dynamic> toJson() => {
+    "ingredients": List<dynamic>.from(ingredients.map((x) => x)),
+    "price": price,
+  };
 }
 
 enum PizzaTypes { margarita, barbacoa, vegetal, hawaiana }

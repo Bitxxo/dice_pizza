@@ -143,9 +143,7 @@ class DiceImage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Image.network(
-      'https://static.vecteezy.com/system/resources/previews/015/081/429/original/black-rolling-dice-3d-rendering-isometric-icon-png.png',
-    );
+    return Image.asset('assets/images/dice.png');
   }
 }
 

@@ -10,7 +10,7 @@ class PizzaTypeButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final Pizza pizza = Pizza(0);
+    final Pizza pizza = Pizza();
     return DecoratedBox(
       decoration: BoxDecoration(
         border: Border.all(),

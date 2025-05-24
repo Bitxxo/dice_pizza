@@ -24,7 +24,7 @@ List<RouteBase> _routes = [
     builder: (context, state) => const LoginScreen(),
     routes: [
       GoRoute(
-        path: '/home',
+        path: 'u',
         name: HomeScreen.name,
         builder: (context, state) => const HomeScreen(),
         routes: _orderCreationFlow,

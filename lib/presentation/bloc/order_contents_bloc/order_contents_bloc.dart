@@ -10,85 +10,81 @@ part 'order_contents_state.dart';
 
 class OrderContentsBloc extends Bloc<OrderContentsEvent, OrderContentsState> {
   OrderContentsBloc() : super(OrderContentsInitial()) {
-    on<OrderContentsEvent>((event, emit) {});
     on<PizzaSelected>((event, emit) => _onPizzaSelected(event, emit));
     on<PizzaAdded>((event, emit) => _onPizzaAdded(event, emit));
     on<PizzaRemoved>((event, emit) => _onPizzaRemoved(event, emit));
     on<PizzaEdited>((event, emit) => _onPizzaEdited(event, emit));
     on<IngredientToggled>((event, emit) => _onIngredientToggled(event, emit));
+    on<OrderContentsEvent>((event, emit) {});
   }
 
   //Guarda la pizza seleccionada en el estado
-  void _onPizzaSelected(event, emit) {
+  void _onPizzaSelected(PizzaSelected event, emit) {
+    print('manejando evento');
+    print(state);
     emit(state.copyWith(selected: event.index));
+    print(state);
   }
 
   ///Añade una pizza al pedido
-  void _onPizzaAdded(event, emit) {
+  void _onPizzaAdded(PizzaAdded event, emit) {
     if (state is OrderContentsInitial) {
-      setLoading(emit);
-      emit(
-        OrderContentsState(
-          products: {1: event.pizza},
-          order: Order(products: [event.pizza]),
-        ),
-      );
+      _setLoading(emit);
+      emit(OrderContentsActive(products: {0: event.pizza}));
     } else {
-      setLoading(emit);
+      if (_loading()) {
+        return;
+      } else {
+        _setLoading(emit);
+      }
       Map<int, Pizza> editedOrder = state.products;
-      editedOrder[editedOrder.length + 1] = event.pizza;
-      emit(
-        OrderContentsState(
-          products: editedOrder,
-          order: state.order.copyWith(products: editedOrder.values.toList()),
-        ),
-      );
+      editedOrder[editedOrder.length] = event.pizza;
+      emit(OrderContentsActive(products: editedOrder));
     }
   }
 
   ///Elimina una pizza del pedido
-  void _onPizzaRemoved(event, emit) {
-    if (!selected(state)) return;
+  void _onPizzaRemoved(PizzaRemoved event, emit) {
     final int id = state.selected;
-    setLoading(emit);
+    if (_loading()) {
+      return;
+    } else {
+      _setLoading(emit);
+    }
     Map<int, Pizza> editedOrder = state.products;
     editedOrder.removeWhere((index, product) => index == id);
-    editedOrder = rearrange(editedOrder);
-    emit(
-      OrderContentsState(
-        products: editedOrder,
-        order: state.order.copyWith(products: editedOrder.values.toList()),
-      ),
-    );
+    editedOrder = _rearrange(editedOrder);
+    emit(OrderContentsActive(products: editedOrder));
   }
 
   ///Modifica una pizza ya presente en el pedido
-  void _onPizzaEdited(event, emit) {
-    if (!selected(state)) return;
+  void _onPizzaEdited(PizzaEdited event, emit) {
     final int id = state.selected;
-    setLoading(emit);
+    if (_loading()) {
+      return;
+    } else {
+      _setLoading(emit);
+    }
     Map<int, Pizza> editedOrder = state.products;
     editedOrder[id] = event.pizza;
-    emit(
-      OrderContentsState(
-        products: editedOrder,
-        order: state.order.copyWith(products: editedOrder.values.toList()),
-      ),
-    );
+    emit(OrderContentsActive(products: editedOrder));
   }
 
   //Elimina un ingrediente a una pizza del pedido
-  void _onIngredientToggled(event, emit) {
-    if (!selected(state)) return;
+  void _onIngredientToggled(IngredientToggled event, emit) {
+    if (_loading()) {
+      return;
+    } else {
+      _setLoading(emit);
+    }
     final int id = state.selected;
-    setLoading(emit);
     Map<int, Pizza> editedOrder = state.products;
     Pizza? editedPizza = editedOrder[id];
     if (editedPizza == null) {
       emit(
         OrderContentsError(
+          selected: state.selected,
           products: state.products,
-          order: state.order,
           errorMessage: 'Pizza not found',
         ),
       );
@@ -99,16 +95,11 @@ class OrderContentsBloc extends Bloc<OrderContentsEvent, OrderContentsState> {
       editedPizza.addIngredient(event.ingredient);
     }
     editedOrder[id] = editedPizza;
-    emit(
-      OrderContentsState(
-        products: editedOrder,
-        order: state.order.copyWith(products: editedOrder.values.toList()),
-      ),
-    );
+    emit(OrderContentsActive(products: editedOrder));
   }
 
   ///Reordena el map que representa el pedido
-  Map<int, Pizza> rearrange(Map<int, Pizza> currentOrder) {
+  Map<int, Pizza> _rearrange(Map<int, Pizza> currentOrder) {
     Map<int, Pizza> newMap = {};
     for (Pizza pizza in currentOrder.values) {
       newMap.addAll({newMap.length: pizza});
@@ -116,11 +107,13 @@ class OrderContentsBloc extends Bloc<OrderContentsEvent, OrderContentsState> {
     return newMap;
   }
 
-  void setLoading(emit) {
-    emit(OrderContentsLoading(order: state.order, products: state.products));
+  void _setLoading(Emitter<OrderContentsState> emit) {
+    emit(
+      OrderContentsLoading(products: state.products, selected: state.selected),
+    );
   }
 
-  bool selected(OrderContentsState state) {
-    return true;
+  bool _loading() {
+    return state is OrderContentsLoading;
   }
 }

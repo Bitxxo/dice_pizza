@@ -16,7 +16,8 @@ final class PizzaAdded extends OrderContentsEvent {
 }
 
 final class PizzaRemoved extends OrderContentsEvent {
-  const PizzaRemoved();
+  final int index;
+  const PizzaRemoved(this.index);
 }
 
 final class PizzaEdited extends OrderContentsEvent {
@@ -27,4 +28,25 @@ final class PizzaEdited extends OrderContentsEvent {
 final class IngredientToggled extends OrderContentsEvent {
   final Ingredient ingredient;
   const IngredientToggled(this.ingredient);
+}
+
+class SaveOrder extends OrderContentsEvent {
+  final Order order;
+  const SaveOrder(this.order);
+}
+
+class UpdateOrder extends OrderContentsEvent {
+  final Order order;
+  final int orderId;
+  const UpdateOrder({required this.order, required this.orderId});
+}
+
+class DeleteOrder extends OrderContentsEvent {
+  final int orderId;
+  const DeleteOrder(this.orderId);
+}
+
+class ReadOrder extends OrderContentsEvent {
+  final int orderId;
+  const ReadOrder(this.orderId);
 }

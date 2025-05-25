@@ -2,32 +2,32 @@ part of 'order_contents_bloc.dart';
 
 @immutable
 class OrderContentsState extends Equatable {
-  final Order order;
   final Map<int, Pizza> products;
   final int selected;
 
-  const OrderContentsState({
-    required this.order,
-    this.products = const {},
-    this.selected = -1,
-  });
+  @override
+  String toString() => 'Producto seleccionado: $selected, pizzas: $products';
+
+  const OrderContentsState({this.products = const {}, this.selected = 0});
 
   @override
-  List<Object?> get props => [order];
+  List<Object?> get props => [products, selected];
 
-  OrderContentsState copyWith({final Order? order, final int? selected}) =>
-      OrderContentsState(
-        order: order ?? this.order,
-        selected: selected ?? this.selected,
-      );
+  OrderContentsState copyWith({
+    final Map<int, Pizza>? products,
+    final int? selected,
+  }) => OrderContentsState(
+    selected: selected ?? this.selected,
+    products: products ?? this.products,
+  );
 }
 
 class OrderContentsInitial extends OrderContentsState {
-  OrderContentsInitial() : super(order: Order(), products: const {});
+  const OrderContentsInitial() : super(products: const {}, selected: 0);
 }
 
 class OrderContentsLoading extends OrderContentsState {
-  const OrderContentsLoading({required super.order, super.products});
+  const OrderContentsLoading({super.products, required super.selected});
 }
 
 class OrderContentsError extends OrderContentsState {
@@ -35,7 +35,11 @@ class OrderContentsError extends OrderContentsState {
 
   const OrderContentsError({
     this.errorMessage = 'Unknown Error',
-    required super.order,
     required super.products,
+    required super.selected,
   });
+}
+
+class OrderContentsActive extends OrderContentsState {
+  const OrderContentsActive({required super.products, super.selected});
 }

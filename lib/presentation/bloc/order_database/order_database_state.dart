@@ -1,17 +1,17 @@
 part of 'order_database_bloc.dart';
 
-abstract class OrderdatabaseState extends Equatable {
-  const OrderdatabaseState();
+abstract class OrderDatabaseState extends Equatable {
+  const OrderDatabaseState();
 
   @override
   List<Object> get props => [];
 }
 
-class OrderdatabaseInitial extends OrderdatabaseState {}
+class OrderDatabaseInitial extends OrderDatabaseState {}
 
-class OrderdatabaseLoading extends OrderdatabaseState {}
+class OrderDatabaseLoading extends OrderDatabaseState {}
 
-class OrderdatabaseError extends OrderdatabaseState {
+class OrderDatabaseError extends OrderDatabaseState {
   final String message;
-  const OrderdatabaseError({this.message = 'Error desconocido'});
+  const OrderDatabaseError({this.message = 'Error desconocido'});
 }

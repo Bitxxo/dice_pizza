@@ -20,10 +20,7 @@ class OrderContentsBloc extends Bloc<OrderContentsEvent, OrderContentsState> {
 
   //Guarda la pizza seleccionada en el estado
   void _onPizzaSelected(PizzaSelected event, emit) {
-    print('manejando evento');
-    print(state);
     emit(state.copyWith(selected: event.index));
-    print(state);
   }
 
   ///Añade una pizza al pedido

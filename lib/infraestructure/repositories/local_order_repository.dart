@@ -9,7 +9,7 @@ class LocalOrderRepository extends OrderRepository {
 
   ///Stores an order in the datasource
   @override
-  Future<bool> createOrder(Order order) async {
+  Future<int?> createOrder(Order order) async {
     return await source.createOrder(order);
   }
 

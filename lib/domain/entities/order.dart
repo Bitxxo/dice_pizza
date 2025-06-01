@@ -8,6 +8,7 @@ class Order {
   Id? id;
 
   int createdBy;
+  String creatorName;
 
   List<Pizza> products;
   int cost = 0;
@@ -21,6 +22,7 @@ class Order {
     this.cost = 0,
     this.lastModified,
     this.paid = false,
+    this.creatorName = 'Anónimo',
   }) {
     if (products.isNotEmpty && cost == 0) {
       for (Pizza p in products) {

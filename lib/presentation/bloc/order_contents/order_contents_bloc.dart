@@ -1,4 +1,3 @@
-import 'package:bloc/bloc.dart';
 import 'package:dice_pizza/domain/entities/ingredient.dart';
 import 'package:dice_pizza/domain/entities/pizza.dart';
 import 'package:dice_pizza/domain/entities/order.dart';
@@ -11,12 +10,16 @@ part 'order_contents_event.dart';
 part 'order_contents_state.dart';
 
 class OrderContentsBloc extends Bloc<OrderContentsEvent, OrderContentsState> {
-  OrderContentsBloc() : super(OrderContentsInitial()) {
+  final int userId;
+  final String username;
+  OrderContentsBloc(this.userId, this.username)
+    : super(OrderContentsInitial()) {
     on<PizzaSelected>((event, emit) => _onPizzaSelected(event, emit));
     on<PizzaAdded>((event, emit) => _onPizzaAdded(event, emit));
     on<PizzaRemoved>((event, emit) => _onPizzaRemoved(event, emit));
     on<PizzaEdited>((event, emit) => _onPizzaEdited(event, emit));
     on<IngredientToggled>((event, emit) => _onIngredientToggled(event, emit));
+    on<SaveOrderContents>((event, emit) => _saveOrder(event, emit));
     on<OrderContentsEvent>((event, emit) {});
   }
 
@@ -27,7 +30,9 @@ class OrderContentsBloc extends Bloc<OrderContentsEvent, OrderContentsState> {
 
   ///Añade una pizza al pedido
   void _onPizzaAdded(PizzaAdded event, emit) {
-    if (state is OrderContentsInitial) {
+    if (_loading()) {
+      return;
+    } else if (state is OrderContentsInitial) {
       _setLoading(emit);
       emit(
         OrderContentsActive(
@@ -36,14 +41,10 @@ class OrderContentsBloc extends Bloc<OrderContentsEvent, OrderContentsState> {
         ),
       );
     } else {
-      if (_loading()) {
-        return;
-      } else {
-        _setLoading(emit);
-      }
+      _setLoading(emit);
+      final id = state.products.length;
       Map<int, Pizza> editedOrder = state.products;
-      final id = editedOrder.length;
-      editedOrder[id] = event.pizza;
+      editedOrder.addAll({id: event.pizza});
       emit(
         OrderContentsActive(
           products: editedOrder,
@@ -99,6 +100,14 @@ class OrderContentsBloc extends Bloc<OrderContentsEvent, OrderContentsState> {
     if (_loading()) {
       return;
     } else if (state.products.isEmpty) {
+      emit(
+        OrderContentsError(
+          products: state.products,
+          selected: state.selected,
+          errorMessage:
+              'No hay productos sobre los que efectuar esta operación',
+        ),
+      );
       return;
     } else {
       _setLoading(emit);
@@ -119,6 +128,50 @@ class OrderContentsBloc extends Bloc<OrderContentsEvent, OrderContentsState> {
         totalPrice: _getTotalPrice(),
       ),
     );
+  }
+
+  Future<void> _saveOrder(SaveOrderContents event, emit) async {
+    final context = event.context;
+    if (_loading()) {
+      return;
+    } else if (state.products == {} ||
+        state.products.isEmpty ||
+        state is OrderContentsInitial) {
+      emit(
+        OrderContentsError(
+          products: {},
+          selected: state.selected,
+          errorMessage: 'No se puede guardar un pedido vacío',
+        ),
+      );
+      return;
+    } else {
+      _setLoading(emit);
+      final Order order = Order(
+        createdBy: userId,
+        creatorName: username,
+        products: state.products.values.toList(),
+      );
+      context.read<OrderDatabaseBloc>().add(SaveOrder(order));
+      final int? currentOrderId = context.read<OrderDatabaseBloc>().state.id;
+      if (currentOrderId == null) {
+        emit(
+          OrderContentsError(
+            products: state.products,
+            selected: state.selected,
+            errorMessage: 'Error al guardar pedido',
+          ),
+        );
+      } else {
+        emit(
+          OrderContentsActive(
+            products: state.products,
+            order: state.order?.copyWith(id: currentOrderId),
+            selected: state.selected,
+          ),
+        );
+      }
+    }
   }
 
   //Calcula el precio total del pedido

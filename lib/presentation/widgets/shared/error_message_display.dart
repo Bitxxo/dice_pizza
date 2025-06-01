@@ -19,14 +19,19 @@ class ErrorMessageDisplay extends StatelessWidget {
         color: theme.cardColor,
       ),
       child: SizedBox(
-        height: 200,
-        width: 200,
-        child: Column(
-          spacing: 30,
-          children: [
-            Text('$title :(', style: theme.textTheme.headlineLarge),
-            Text(message),
-          ],
+        height: 250,
+        width: 300,
+        child: Padding(
+          padding: const EdgeInsets.all(12.0),
+          child: SingleChildScrollView(
+            child: Column(
+              spacing: 30,
+              children: [
+                Text('$title :(', style: theme.textTheme.headlineLarge),
+                Text(message),
+              ],
+            ),
+          ),
         ),
       ),
     );

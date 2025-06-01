@@ -1,4 +1,5 @@
 import 'package:dice_pizza/presentation/widgets/order_editing_scaffold.dart';
+import 'package:dice_pizza/presentation/widgets/payment_form.dart';
 import 'package:dice_pizza/presentation/widgets/product/order_payment_products_list.dart';
 import 'package:flutter/material.dart';
 
@@ -15,7 +16,13 @@ class OrderPaymentView extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Row(
-              children: [OrderPaymentProductsList(), Spacer(), Placeholder()],
+              spacing: 20,
+              children: [
+                OrderPaymentProductsList(),
+                Spacer(),
+                PaymentForm(),
+                SizedBox(width: 100),
+              ],
             ),
           ),
         ],

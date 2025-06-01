@@ -3,7 +3,7 @@ import 'package:dice_pizza/domain/entities/order.dart';
 ///Allows interaction with any datasource
 abstract class OrderDatasource {
   ///Stores an order in the database
-  Future<bool> createOrder(Order order);
+  Future<int?> createOrder(Order order);
 
   ///Modifies an order in the database
   Future<bool> updateOrder({required Order edited, required int id});

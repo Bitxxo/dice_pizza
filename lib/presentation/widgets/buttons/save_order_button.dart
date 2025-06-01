@@ -1,26 +1,48 @@
-import 'package:dice_pizza/domain/entities/order.dart';
-import 'package:dice_pizza/presentation/bloc/order_contents_bloc/order_contents_bloc.dart';
-import 'package:dice_pizza/presentation/bloc/order_database/order_database_bloc.dart';
-import 'package:dice_pizza/presentation/providers/dummyapi/dummy_api_user_provider.dart';
+import 'package:dice_pizza/presentation/bloc/order_contents/order_contents_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class SaveOrderButton extends ConsumerWidget {
+class SaveOrderButton extends StatelessWidget {
   final bool bigScreen;
   const SaveOrderButton(this.bigScreen, {super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final userId = ref.watch(userProvider).value?.id ?? 0;
+  Widget build(BuildContext context) {
+    return bigScreen
+        ? _SaveButton(bigScreen: bigScreen)
+        : Tooltip(
+          message: 'Guardar pedido',
+          child: _SaveButton(bigScreen: bigScreen),
+        );
+  }
+}
+
+class _SaveButton extends StatelessWidget {
+  const _SaveButton({required this.bigScreen});
+  final bool bigScreen;
+
+  @override
+  Widget build(BuildContext context) {
     return FilledButton.icon(
-      onPressed: () {
-        final products =
-            context.read<OrderContentsBloc>().state.products.values.toList();
-        final Order order = Order(createdBy: userId, products: products);
-        context.read<OrderDatabaseBloc>().add(SaveOrder(order));
+      onPressed: () async {
+        context.read<OrderContentsBloc>().add(SaveOrderContents(context));
+        await Future.delayed(Duration(milliseconds: 200));
+        if (context.mounted) {
+          final state = context.read<OrderContentsBloc>().state;
+          if (state is OrderContentsError) {
+            ScaffoldMessenger.of(context).clearSnackBars();
+            ScaffoldMessenger.of(
+              context,
+            ).showSnackBar(SnackBar(content: Text(state.errorMessage)));
+          } else if (state is OrderContentsActive) {
+            ScaffoldMessenger.of(context).clearSnackBars();
+            ScaffoldMessenger.of(
+              context,
+            ).showSnackBar(SnackBar(content: Text('¡Guardado con éxito!')));
+          }
+        }
       },
-      label: bigScreen ? Text('Guardar Pedido') : SizedBox.shrink(),
+      label: bigScreen ? Text('Guardar Pedido') : Text(''),
       icon: Icon(Icons.save, color: Colors.black),
     );
   }

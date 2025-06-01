@@ -10,7 +10,7 @@ class OrderProductsView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return OrderEditingScaffold(
-      title: 'Añadir Productos',
+      title: 'Añadir Pizzas',
       child: Column(
         spacing: 10,
         children: [OrderProductsList(), OrderProductsTypeSelection()],

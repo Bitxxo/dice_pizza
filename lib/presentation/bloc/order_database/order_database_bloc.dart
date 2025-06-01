@@ -10,7 +10,7 @@ part 'order_database_state.dart';
 
 class OrderDatabaseBloc extends Bloc<OrderDatabaseEvent, OrderDatabaseState> {
   late final OrderRepository repository;
-  OrderDatabaseBloc() : super(OrderDatabaseInitial()) {
+  OrderDatabaseBloc() : super(OrderDatabaseInitial(null)) {
     repository = LocalOrderRepository(OrderIsarDatasource());
 
     on<SaveOrder>((event, emit) => _onSaveOrder(event, emit));
@@ -33,10 +33,10 @@ class OrderDatabaseBloc extends Bloc<OrderDatabaseEvent, OrderDatabaseState> {
       _setLoading(emit);
     }
     try {
-      await repository.createOrder(event.order);
-      emit(OrderDatabaseInitial());
+      final int? id = await repository.createOrder(event.order);
+      emit(OrderDatabaseInitial(id));
     } catch (e) {
-      emit(OrderDatabaseError(message: 'Error al guardar el pedido'));
+      emit(OrderDatabaseError(state.id, message: 'Error al guardar el pedido'));
     }
   }
 
@@ -51,9 +51,11 @@ class OrderDatabaseBloc extends Bloc<OrderDatabaseEvent, OrderDatabaseState> {
     }
     try {
       await repository.deleteOrder(event.orderId);
-      emit(OrderDatabaseInitial());
+      emit(OrderDatabaseInitial(state.id));
     } catch (e) {
-      emit(OrderDatabaseError(message: 'Error al eliminar el pedido'));
+      emit(
+        OrderDatabaseError(state.id, message: 'Error al eliminar el pedido'),
+      );
     }
   }
 
@@ -67,10 +69,15 @@ class OrderDatabaseBloc extends Bloc<OrderDatabaseEvent, OrderDatabaseState> {
       _setLoading(emit);
     }
     try {
-      await repository.getOrderById(event.orderId);
-      emit(OrderDatabaseInitial());
+      final order = await repository.getOrderById(event.orderId);
+      emit(OrderDatabaseGet(order!, event.orderId));
     } catch (e) {
-      emit(OrderDatabaseError(message: 'Error al recuperar el pedido'));
+      emit(
+        OrderDatabaseError(
+          event.orderId,
+          message: 'Error al recuperar el pedido',
+        ),
+      );
     }
   }
 
@@ -85,9 +92,14 @@ class OrderDatabaseBloc extends Bloc<OrderDatabaseEvent, OrderDatabaseState> {
     }
     try {
       await repository.updateOrder(edited: event.order, id: event.orderId);
-      emit(OrderDatabaseInitial());
+      emit(OrderDatabaseInitial(event.orderId));
     } catch (e) {
-      emit(OrderDatabaseError(message: 'Error al modificar el pedido'));
+      emit(
+        OrderDatabaseError(
+          event.orderId,
+          message: 'Error al modificar el pedido',
+        ),
+      );
     }
   }
 
@@ -101,10 +113,10 @@ class OrderDatabaseBloc extends Bloc<OrderDatabaseEvent, OrderDatabaseState> {
       _setLoading(emit);
     }
     try {
-      await repository.getAllOrders(page: event.page);
-      emit(OrderDatabaseInitial());
+      final list = await repository.getAllOrders(page: event.page);
+      emit(OrderDatabaseGetMany(list, null));
     } catch (e) {
-      emit(OrderDatabaseError(message: 'Error al recuperar pedidos'));
+      emit(OrderDatabaseError(state.id, message: 'Error al recuperar pedidos'));
     }
   }
 
@@ -118,11 +130,12 @@ class OrderDatabaseBloc extends Bloc<OrderDatabaseEvent, OrderDatabaseState> {
       _setLoading(emit);
     }
     try {
-      await repository.getOrderByCreator(event.creator);
-      emit(OrderDatabaseInitial());
+      final list = await repository.getOrderByCreator(event.creator);
+      emit(OrderDatabaseGetMany(list, null));
     } catch (e) {
       emit(
         OrderDatabaseError(
+          state.id,
           message:
               'Error al recuperar pedidos creados por usuario ${event.creator}',
         ),
@@ -135,6 +148,6 @@ class OrderDatabaseBloc extends Bloc<OrderDatabaseEvent, OrderDatabaseState> {
   }
 
   void _setLoading(Emitter<OrderDatabaseState> emit) {
-    emit(OrderDatabaseLoading());
+    emit(OrderDatabaseLoading(state.id));
   }
 }

@@ -13,20 +13,25 @@ class OrderIsarDatasource extends OrderDatasource {
   //Initializes the database instance
   Future<void> init() async {
     final dir = await getApplicationDocumentsDirectory();
-    final isar = await Isar.open([OrderSchema], directory: dir.path);
-    db = isar;
+    if (Isar.getInstance() == null) {
+      final isar = await Isar.open([OrderSchema], directory: dir.path);
+      db = isar;
+    } else {
+      db = Isar.getInstance()!;
+    }
   }
 
   ///Stores an order in the database
   @override
-  Future<bool> createOrder(Order order) async {
+  Future<int?> createOrder(Order order) async {
     try {
+      int? id;
       await db.writeTxn(() async {
-        await db.orders.put(order);
+        id = await db.orders.put(order);
       });
-      return true;
+      return id;
     } catch (e) {
-      return false;
+      return null;
     }
   }
 

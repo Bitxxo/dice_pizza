@@ -29,31 +29,21 @@ class IngredientToggled extends OrderContentsEvent {
   final Ingredient ingredient;
   const IngredientToggled(this.ingredient);
 }
-/*
 
-class SaveOrder extends OrderContentsEvent {
-  final int userId;
-  const SaveOrder(this.userId);
+class SaveOrderContents extends OrderContentsEvent {
+  final BuildContext context;
+  const SaveOrderContents(this.context);
 }
 
 class UpdateOrder extends OrderContentsEvent {
-  final Order order;
-  final int orderId;
-  final int userId;
-  const UpdateOrder({
-    required this.order,
-    required this.orderId,
-    required this.userId,
-  });
+  const UpdateOrder();
 }
 
 class DeleteOrder extends OrderContentsEvent {
-  final int orderId;
-  const DeleteOrder(this.orderId);
+  const DeleteOrder();
 }
 
 class ReadOrder extends OrderContentsEvent {
   final int orderId;
   const ReadOrder(this.orderId);
 }
-*/

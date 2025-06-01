@@ -31,11 +31,23 @@ class HomeScreen extends ConsumerWidget {
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endTop,
       body: Center(
-        child: FilledButton(
-          onPressed: () {
-            context.push(RouterPaths.products);
-          },
-          child: Text("Crear pedido"),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          spacing: 30,
+          children: [
+            FilledButton(
+              onPressed: () {
+                context.push(RouterPaths.products);
+              },
+              child: Text("Crear pedido"),
+            ),
+            FilledButton(
+              onPressed: () {
+                context.push(RouterPaths.products);
+              },
+              child: Text("Ver pedidos existentes"),
+            ),
+          ],
         ),
       ),
     );

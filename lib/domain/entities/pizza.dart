@@ -73,12 +73,7 @@ class Pizza {
   String getName() {
     final name =
         pizzaTypeIngredients.entries
-            .where(
-              (entry) => listEquals(
-                entry.value.toSet().toList(),
-                ingredients?.toSet().toList(),
-              ),
-            )
+            .where((entry) => listEquals(entry.value, ingredients))
             .firstOrNull
             ?.key;
     return name ?? 'Personalizada';
@@ -140,16 +135,16 @@ enum PizzaTypes {
   confusa,
 }
 
-Map<String, List<Ingredient>> pizzaTypeIngredients = {
+const Map<String, List<Ingredient>> pizzaTypeIngredients = {
   'Margarita': [],
   'Barbacoa': [Ingredient.bacon, Ingredient.cebolla],
   'Vegetal': [Ingredient.cebolla, Ingredient.champinon, Ingredient.pimiento],
   'Hawaiana': [Ingredient.jamon, Ingredient.pina],
   'Vegana': [
-    Ingredient.polloVegano,
-    Ingredient.pimiento,
-    Ingredient.champinon,
     Ingredient.cebolla,
+    Ingredient.champinon,
+    Ingredient.pimiento,
+    Ingredient.polloVegano,
   ],
   'Carnaca': [Ingredient.bacon, Ingredient.jamon, Ingredient.pollo],
   'Carbonara': [Ingredient.bacon, Ingredient.cebolla, Ingredient.champinon],
@@ -160,9 +155,9 @@ Map<String, List<Ingredient>> pizzaTypeIngredients = {
     Ingredient.pimiento,
   ],
   'Confusa': [
+    Ingredient.bacon,
+    Ingredient.pina,
     Ingredient.polloVegano,
     Ingredient.queso,
-    Ingredient.pina,
-    Ingredient.bacon,
   ],
 };

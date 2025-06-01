@@ -5,6 +5,7 @@ class OrderContentsState extends Equatable {
   final Map<int, Pizza> products;
   final int selected;
   final int totalPrice;
+  final Order? order;
 
   @override
   String toString() => 'Producto seleccionado: $selected, pizzas: $products';
@@ -13,6 +14,7 @@ class OrderContentsState extends Equatable {
     this.products = const {},
     this.selected = 0,
     this.totalPrice = 0,
+    this.order,
   });
 
   @override
@@ -22,15 +24,17 @@ class OrderContentsState extends Equatable {
     final Map<int, Pizza>? products,
     final int? selected,
     final int? totalPrice,
+    final Order? order,
   }) => OrderContentsState(
     selected: selected ?? this.selected,
     products: products ?? this.products,
     totalPrice: totalPrice ?? this.totalPrice,
+    order: order ?? this.order,
   );
 }
 
 class OrderContentsInitial extends OrderContentsState {
-  const OrderContentsInitial()
+  const OrderContentsInitial({super.order})
     : super(products: const {}, selected: 0, totalPrice: 0);
 }
 
@@ -39,6 +43,7 @@ class OrderContentsLoading extends OrderContentsState {
     super.products,
     required super.selected,
     super.totalPrice,
+    super.order,
   });
 }
 
@@ -50,6 +55,7 @@ class OrderContentsError extends OrderContentsState {
     required super.products,
     required super.selected,
     super.totalPrice,
+    super.order,
   });
 }
 
@@ -58,5 +64,6 @@ class OrderContentsActive extends OrderContentsState {
     required super.products,
     super.selected,
     super.totalPrice,
+    super.order,
   });
 }

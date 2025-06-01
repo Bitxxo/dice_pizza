@@ -27,18 +27,23 @@ const OrderSchema = CollectionSchema(
       name: r'createdBy',
       type: IsarType.long,
     ),
-    r'lastModified': PropertySchema(
+    r'creatorName': PropertySchema(
       id: 2,
+      name: r'creatorName',
+      type: IsarType.string,
+    ),
+    r'lastModified': PropertySchema(
+      id: 3,
       name: r'lastModified',
       type: IsarType.dateTime,
     ),
     r'paid': PropertySchema(
-      id: 3,
+      id: 4,
       name: r'paid',
       type: IsarType.bool,
     ),
     r'products': PropertySchema(
-      id: 4,
+      id: 5,
       name: r'products',
       type: IsarType.objectList,
       target: r'Pizza',
@@ -64,6 +69,7 @@ int _orderEstimateSize(
   Map<Type, List<int>> allOffsets,
 ) {
   var bytesCount = offsets.last;
+  bytesCount += 3 + object.creatorName.length * 3;
   bytesCount += 3 + object.products.length * 3;
   {
     final offsets = allOffsets[Pizza]!;
@@ -83,10 +89,11 @@ void _orderSerialize(
 ) {
   writer.writeLong(offsets[0], object.cost);
   writer.writeLong(offsets[1], object.createdBy);
-  writer.writeDateTime(offsets[2], object.lastModified);
-  writer.writeBool(offsets[3], object.paid);
+  writer.writeString(offsets[2], object.creatorName);
+  writer.writeDateTime(offsets[3], object.lastModified);
+  writer.writeBool(offsets[4], object.paid);
   writer.writeObjectList<Pizza>(
-    offsets[4],
+    offsets[5],
     allOffsets,
     PizzaSchema.serialize,
     object.products,
@@ -102,11 +109,12 @@ Order _orderDeserialize(
   final object = Order(
     cost: reader.readLongOrNull(offsets[0]) ?? 0,
     createdBy: reader.readLongOrNull(offsets[1]) ?? -1,
+    creatorName: reader.readStringOrNull(offsets[2]) ?? 'Anonimous',
     id: id,
-    lastModified: reader.readDateTimeOrNull(offsets[2]),
-    paid: reader.readBoolOrNull(offsets[3]) ?? false,
+    lastModified: reader.readDateTimeOrNull(offsets[3]),
+    paid: reader.readBoolOrNull(offsets[4]) ?? false,
     products: reader.readObjectList<Pizza>(
-          offsets[4],
+          offsets[5],
           PizzaSchema.deserialize,
           allOffsets,
           Pizza(),
@@ -128,10 +136,12 @@ P _orderDeserializeProp<P>(
     case 1:
       return (reader.readLongOrNull(offset) ?? -1) as P;
     case 2:
-      return (reader.readDateTimeOrNull(offset)) as P;
+      return (reader.readStringOrNull(offset) ?? 'Anonimous') as P;
     case 3:
-      return (reader.readBoolOrNull(offset) ?? false) as P;
+      return (reader.readDateTimeOrNull(offset)) as P;
     case 4:
+      return (reader.readBoolOrNull(offset) ?? false) as P;
+    case 5:
       return (reader.readObjectList<Pizza>(
             offset,
             PizzaSchema.deserialize,
@@ -333,6 +343,136 @@ extension OrderQueryFilter on QueryBuilder<Order, Order, QFilterCondition> {
         includeLower: includeLower,
         upper: upper,
         includeUpper: includeUpper,
+      ));
+    });
+  }
+
+  QueryBuilder<Order, Order, QAfterFilterCondition> creatorNameEqualTo(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'creatorName',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Order, Order, QAfterFilterCondition> creatorNameGreaterThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'creatorName',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Order, Order, QAfterFilterCondition> creatorNameLessThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'creatorName',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Order, Order, QAfterFilterCondition> creatorNameBetween(
+    String lower,
+    String upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'creatorName',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Order, Order, QAfterFilterCondition> creatorNameStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'creatorName',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Order, Order, QAfterFilterCondition> creatorNameEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'creatorName',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Order, Order, QAfterFilterCondition> creatorNameContains(
+      String value,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'creatorName',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Order, Order, QAfterFilterCondition> creatorNameMatches(
+      String pattern,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'creatorName',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Order, Order, QAfterFilterCondition> creatorNameIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'creatorName',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<Order, Order, QAfterFilterCondition> creatorNameIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'creatorName',
+        value: '',
       ));
     });
   }
@@ -604,6 +744,18 @@ extension OrderQuerySortBy on QueryBuilder<Order, Order, QSortBy> {
     });
   }
 
+  QueryBuilder<Order, Order, QAfterSortBy> sortByCreatorName() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'creatorName', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Order, Order, QAfterSortBy> sortByCreatorNameDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'creatorName', Sort.desc);
+    });
+  }
+
   QueryBuilder<Order, Order, QAfterSortBy> sortByLastModified() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'lastModified', Sort.asc);
@@ -651,6 +803,18 @@ extension OrderQuerySortThenBy on QueryBuilder<Order, Order, QSortThenBy> {
   QueryBuilder<Order, Order, QAfterSortBy> thenByCreatedByDesc() {
     return QueryBuilder.apply(this, (query) {
       return query.addSortBy(r'createdBy', Sort.desc);
+    });
+  }
+
+  QueryBuilder<Order, Order, QAfterSortBy> thenByCreatorName() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'creatorName', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Order, Order, QAfterSortBy> thenByCreatorNameDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'creatorName', Sort.desc);
     });
   }
 
@@ -704,6 +868,13 @@ extension OrderQueryWhereDistinct on QueryBuilder<Order, Order, QDistinct> {
     });
   }
 
+  QueryBuilder<Order, Order, QDistinct> distinctByCreatorName(
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'creatorName', caseSensitive: caseSensitive);
+    });
+  }
+
   QueryBuilder<Order, Order, QDistinct> distinctByLastModified() {
     return QueryBuilder.apply(this, (query) {
       return query.addDistinctBy(r'lastModified');
@@ -733,6 +904,12 @@ extension OrderQueryProperty on QueryBuilder<Order, Order, QQueryProperty> {
   QueryBuilder<Order, int, QQueryOperations> createdByProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'createdBy');
+    });
+  }
+
+  QueryBuilder<Order, String, QQueryOperations> creatorNameProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'creatorName');
     });
   }
 

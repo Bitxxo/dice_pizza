@@ -5,7 +5,7 @@ import 'package:path_provider/path_provider.dart';
 
 ///Allows interaction with an Isar database
 class OrderIsarDatasource extends OrderDatasource {
-  late final IsarCollection<Order> db;
+  late final Isar db;
 
   OrderIsarDatasource() {
     init();
@@ -14,14 +14,16 @@ class OrderIsarDatasource extends OrderDatasource {
   Future<void> init() async {
     final dir = await getApplicationDocumentsDirectory();
     final isar = await Isar.open([OrderSchema], directory: dir.path);
-    db = isar.orders;
+    db = isar;
   }
 
   ///Stores an order in the database
   @override
   Future<bool> createOrder(Order order) async {
     try {
-      await db.put(order);
+      await db.writeTxn(() async {
+        await db.orders.put(order);
+      });
       return true;
     } catch (e) {
       return false;
@@ -31,11 +33,13 @@ class OrderIsarDatasource extends OrderDatasource {
   ///Modifies an order in the database
   @override
   Future<bool> updateOrder({required Order edited, required int id}) async {
-    final Order? old = await db.get(id);
+    final Order? old = await db.orders.get(id);
     if (old == null) return false;
     try {
       edited.id = old.id;
-      await db.put(edited);
+      await db.writeTxn(() async {
+        await db.orders.put(edited);
+      });
       return true;
     } catch (e) {
       return false;
@@ -45,20 +49,16 @@ class OrderIsarDatasource extends OrderDatasource {
   ///Removes an order from the database
   @override
   Future<bool> deleteOrder(int id) async {
-    return await db.delete(id);
+    return await db.orders.delete(id);
   }
 
   ///Retrieves all orders available in the database, in groups of 10
   @override
   Future<List<Order>> getAllOrders({int page = 0}) async {
-    /*
-    List<int> ids = [];
-    for (int i = (page * 10) + 1; i < (page * 10) + 10; i++) {
-      ids.add(i);
-    }
-    final results = await db.getAll(ids);
-    */
-    final query = db.buildQuery(limit: (page + 1) * 10, offset: page * 10);
+    final query = db.orders.buildQuery(
+      limit: (page + 1) * 10,
+      offset: page * 10,
+    );
     final results = await query.findAll();
     try {
       return results.whereType<Order>().toList();
@@ -70,13 +70,13 @@ class OrderIsarDatasource extends OrderDatasource {
   ///Retrieves a specific order, for which the creator's id is given, from the datasource
   @override
   Future<List<Order>> getOrderByCreator(int id) async {
-    final results = db.filter().createdByEqualTo(id).findAll();
+    final results = db.orders.filter().createdByEqualTo(id).findAll();
     return results;
   }
 
   ///Retrieves a specific Order, for which the id is given, from the datasource
   @override
   Future<Order?> getOrderById(int id) async {
-    return db.filter().idEqualTo(id).findFirst();
+    return db.orders.filter().idEqualTo(id).findFirst();
   }
 }

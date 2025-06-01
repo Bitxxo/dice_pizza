@@ -9,14 +9,26 @@ class OrderProductsTypeSelection extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final bool isBigScreen = MediaQuery.sizeOf(context).width > 530;
+    final int selected = context.watch<OrderContentsBloc>().state.selected;
+    final String currentType =
+        context.watch<OrderContentsBloc>().state.products[selected]?.name ?? '';
     return Center(
       child: Padding(
         padding: const EdgeInsets.all(15.0),
-        child: Row(
-          spacing: 20,
+        child: GridView.count(
+          mainAxisSpacing: 30,
+          crossAxisSpacing: 20,
+          childAspectRatio: isBigScreen ? 4 : 2,
+          crossAxisCount: isBigScreen ? 4 : 2,
+          shrinkWrap: true,
           children: [
             for (PizzaTypes type in PizzaTypes.values)
-              PizzaTypeButton(type, addPizza),
+              PizzaTypeButton(
+                type,
+                addPizza,
+                currentType.toLowerCase() == type.name,
+              ),
           ],
         ),
       ),
@@ -24,6 +36,11 @@ class OrderProductsTypeSelection extends StatelessWidget {
   }
 
   void addPizza(Pizza pizza, BuildContext context) {
-    context.read<OrderContentsBloc>().add(PizzaAdded(pizza));
+    if (context.read<OrderContentsBloc>().state.products.isEmpty) {
+      context.read<OrderContentsBloc>().add(
+        PizzaAdded(Pizza.fromType(PizzaTypes.margarita)),
+      );
+    }
+    context.read<OrderContentsBloc>().add(PizzaEdited(pizza));
   }
 }

@@ -8,9 +8,9 @@ import 'package:equatable/equatable.dart';
 part 'order_database_event.dart';
 part 'order_database_state.dart';
 
-class OrderdatabaseBloc extends Bloc<OrderDatabaseEvent, OrderDatabaseState> {
+class OrderDatabaseBloc extends Bloc<OrderDatabaseEvent, OrderDatabaseState> {
   late final OrderRepository repository;
-  OrderdatabaseBloc() : super(OrderDatabaseInitial()) {
+  OrderDatabaseBloc() : super(OrderDatabaseInitial()) {
     repository = LocalOrderRepository(OrderIsarDatasource());
 
     on<SaveOrder>((event, emit) => _onSaveOrder(event, emit));

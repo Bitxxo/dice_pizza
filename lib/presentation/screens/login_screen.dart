@@ -1,5 +1,4 @@
 import 'package:dice_pizza/config/router/navigation_constants.dart';
-import 'package:dice_pizza/config/theme/visual_constants.dart';
 import 'package:dice_pizza/presentation/providers/dummyapi/dummy_api_auth_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -33,107 +32,123 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final isBigScreen = MediaQuery.of(context).size.width > 650;
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
         title: const Text('Dice Pizza Order Management'),
       ),
-      body: Padding(
-        padding: VisualConstants.drawerButtonPadding,
-        child: Center(
-          key: formKey,
-          child: SingleChildScrollView(
-            child: Column(
-              spacing: 20,
-              children: [
+      body: Center(
+        key: formKey,
+        child: SingleChildScrollView(
+          child: Column(
+            spacing: 20,
+            children: [
+              if (isBigScreen)
                 SizedBox(
                   height: 150,
-                  child: SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    physics: NeverScrollableScrollPhysics(),
-                    child: Row(
-                      children: [
-                        DiceImage(),
-                        DiceImage(),
-                        DiceImage(),
-                        DiceImage(),
-                        DiceImage(),
-                        DiceImage(),
-                        DiceImage(),
-                        DiceImage(),
-                      ],
+                  child: Center(
+                    child: AspectRatio(
+                      aspectRatio: 8,
+                      child: Row(
+                        children: [
+                          DiceImage(),
+                          DiceImage(),
+                          DiceImage(),
+                          DiceImage(),
+                          DiceImage(),
+                          DiceImage(),
+                          DiceImage(),
+                          DiceImage(),
+                        ],
+                      ),
                     ),
                   ),
                 ),
-                Container(
-                  padding: VisualConstants.drawerButtonPadding,
-                  height: 330,
-                  decoration: BoxDecoration(
-                    color: const Color.fromARGB(50, 125, 189, 211),
-                    border: Border.all(color: Colors.black12, width: 1),
-                    borderRadius: VisualConstants.detailShape,
-                  ),
-                  child: Column(
-                    spacing: 10,
-                    children: [
-                      _CustomTextField(userController, 'Username', 'emilys'),
-                      _CustomTextField(
-                        passController,
-                        'Password',
-                        'emilyspass',
-                      ),
-                      FilledButton.tonalIcon(
-                        label: const Text('Log in'),
-                        onPressed: () async {
-                          ScaffoldMessenger.of(context).clearSnackBars();
-                          final String name = userController.text;
-                          final String pass = passController.text;
-                          await ref
-                              .read(authProvider.notifier)
-                              .authenticate(name, pass);
-                          if (context.mounted) {
-                            if (ref.read(authProvider) ==
-                                AuthStatus.authenticated) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text(
-                                    'Logged in successfully',
-                                    textAlign: TextAlign.center,
-                                  ),
-                                ),
-                              );
-                              context.go(RouterPaths.home);
-                            } else {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text(
-                                    'Login failed',
-                                    textAlign: TextAlign.center,
-                                  ),
-                                ),
-                              );
-                            }
-                          }
-                        }, //onPressed
-                      ),
-                    ],
-                  ),
+              Container(
+                padding: EdgeInsets.all(30),
+                height: 330,
+                decoration: BoxDecoration(
+                  color: const Color.fromARGB(50, 125, 189, 211),
+                  border: Border.all(color: Colors.black12, width: 1),
+                  borderRadius: BorderRadius.circular(10),
                 ),
-                FilledButton.tonalIcon(
-                  iconAlignment: IconAlignment.end,
-                  onPressed: () {
-                    ref.read(authProvider.notifier).setGuest();
-                    ScaffoldMessenger.of(context).clearSnackBars();
-                    context.go(RouterPaths.home);
-                  },
-                  label: const Text('Being a guest is fine, really'),
-                  icon: const Icon(Icons.arrow_forward_outlined),
+                child: Column(
+                  spacing: 10,
+                  children: [
+                    _CustomTextField(userController, 'Usuario', 'emilys'),
+                    _CustomTextField(
+                      passController,
+                      'Contraseña',
+                      'emilyspass',
+                    ),
+                    LoginButton(
+                      userController: userController,
+                      passController: passController,
+                      ref: ref,
+                    ),
+                  ],
                 ),
-              ],
-            ),
+              ),
+              FilledButton.tonalIcon(
+                iconAlignment: IconAlignment.end,
+                onPressed: () {
+                  ref.read(authProvider.notifier).setGuest();
+                  ScaffoldMessenger.of(context).clearSnackBars();
+                  context.go(RouterPaths.home);
+                },
+                label: const Text('Entrar como invitado'),
+                icon: const Icon(Icons.arrow_forward_outlined),
+              ),
+            ],
           ),
         ),
       ),
+    );
+  }
+}
+
+class LoginButton extends StatelessWidget {
+  const LoginButton({
+    super.key,
+    required this.userController,
+    required this.passController,
+    required this.ref,
+  });
+
+  final TextEditingController userController;
+  final TextEditingController passController;
+  final WidgetRef ref;
+
+  @override
+  Widget build(BuildContext context) {
+    return FilledButton.tonalIcon(
+      label: const Text('Iniciar sesión'),
+      onPressed: () async {
+        ScaffoldMessenger.of(context).clearSnackBars();
+        final String name = userController.text;
+        final String pass = passController.text;
+        await ref.read(authProvider.notifier).authenticate(name, pass);
+        if (context.mounted) {
+          if (ref.read(authProvider) == AuthStatus.authenticated) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Sesión iniciada', textAlign: TextAlign.center),
+              ),
+            );
+            context.go(RouterPaths.home);
+          } else {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text(
+                  'Inicio de sesión fallido',
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            );
+          }
+        }
+      }, //onPressed
     );
   }
 }
@@ -169,11 +184,11 @@ class _CustomTextField extends StatelessWidget {
           ),
           validator: (value) {
             if (value == null || value.isEmpty) {
-              return 'Please enter your ${label.toLowerCase()}';
+              return 'Por favor, introduce tu ${label.toLowerCase()}';
             }
             return null;
           },
-          autofillHints: const ['Username'],
+          autofillHints: [label.toLowerCase()],
           controller: controller,
         ),
       ),

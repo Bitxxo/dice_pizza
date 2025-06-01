@@ -19,8 +19,13 @@ const PizzaSchema = Schema(
       type: IsarType.stringList,
       enumMap: _PizzaingredientsEnumValueMap,
     ),
-    r'price': PropertySchema(
+    r'name': PropertySchema(
       id: 1,
+      name: r'name',
+      type: IsarType.string,
+    ),
+    r'price': PropertySchema(
+      id: 2,
       name: r'price',
       type: IsarType.long,
     )
@@ -37,13 +42,19 @@ int _pizzaEstimateSize(
   Map<Type, List<int>> allOffsets,
 ) {
   var bytesCount = offsets.last;
-  bytesCount += 3 + object.ingredients.length * 3;
   {
-    for (var i = 0; i < object.ingredients.length; i++) {
-      final value = object.ingredients[i];
-      bytesCount += value.name.length * 3;
+    final list = object.ingredients;
+    if (list != null) {
+      bytesCount += 3 + list.length * 3;
+      {
+        for (var i = 0; i < list.length; i++) {
+          final value = list[i];
+          bytesCount += value.name.length * 3;
+        }
+      }
     }
   }
+  bytesCount += 3 + object.name.length * 3;
   return bytesCount;
 }
 
@@ -54,8 +65,9 @@ void _pizzaSerialize(
   Map<Type, List<int>> allOffsets,
 ) {
   writer.writeStringList(
-      offsets[0], object.ingredients.map((e) => e.name).toList());
-  writer.writeLong(offsets[1], object.price);
+      offsets[0], object.ingredients?.map((e) => e.name).toList());
+  writer.writeString(offsets[1], object.name);
+  writer.writeLong(offsets[2], object.price);
 }
 
 Pizza _pizzaDeserialize(
@@ -66,12 +78,11 @@ Pizza _pizzaDeserialize(
 ) {
   final object = Pizza(
     ingredients: reader
-            .readStringList(offsets[0])
-            ?.map((e) =>
-                _PizzaingredientsValueEnumMap[e] ?? Ingredient.mozzarella)
-            .toList() ??
-        const [],
-    price: reader.readLongOrNull(offsets[1]) ?? 2,
+        .readStringList(offsets[0])
+        ?.map((e) => _PizzaingredientsValueEnumMap[e] ?? Ingredient.queso)
+        .toList(),
+    name: reader.readStringOrNull(offsets[1]) ?? '',
+    price: reader.readLongOrNull(offsets[2]) ?? 3,
   );
   return object;
 }
@@ -85,34 +96,62 @@ P _pizzaDeserializeProp<P>(
   switch (propertyId) {
     case 0:
       return (reader
-              .readStringList(offset)
-              ?.map((e) =>
-                  _PizzaingredientsValueEnumMap[e] ?? Ingredient.mozzarella)
-              .toList() ??
-          const []) as P;
+          .readStringList(offset)
+          ?.map((e) => _PizzaingredientsValueEnumMap[e] ?? Ingredient.queso)
+          .toList()) as P;
     case 1:
-      return (reader.readLongOrNull(offset) ?? 2) as P;
+      return (reader.readStringOrNull(offset) ?? '') as P;
+    case 2:
+      return (reader.readLongOrNull(offset) ?? 3) as P;
     default:
       throw IsarError('Unknown property with id $propertyId');
   }
 }
 
 const _PizzaingredientsEnumValueMap = {
-  r'mozzarella': r'mozzarella',
+  r'queso': r'queso',
   r'bacon': r'bacon',
   r'atun': r'atun',
   r'cebolla': r'cebolla',
   r'pina': r'pina',
+  r'pimiento': r'pimiento',
+  r'jamon': r'jamon',
+  r'champinon': r'champinon',
+  r'pollo': r'pollo',
+  r'polloVegano': r'polloVegano',
+  r'olivas': r'olivas',
 };
 const _PizzaingredientsValueEnumMap = {
-  r'mozzarella': Ingredient.mozzarella,
+  r'queso': Ingredient.queso,
   r'bacon': Ingredient.bacon,
   r'atun': Ingredient.atun,
   r'cebolla': Ingredient.cebolla,
   r'pina': Ingredient.pina,
+  r'pimiento': Ingredient.pimiento,
+  r'jamon': Ingredient.jamon,
+  r'champinon': Ingredient.champinon,
+  r'pollo': Ingredient.pollo,
+  r'polloVegano': Ingredient.polloVegano,
+  r'olivas': Ingredient.olivas,
 };
 
 extension PizzaQueryFilter on QueryBuilder<Pizza, Pizza, QFilterCondition> {
+  QueryBuilder<Pizza, Pizza, QAfterFilterCondition> ingredientsIsNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNull(
+        property: r'ingredients',
+      ));
+    });
+  }
+
+  QueryBuilder<Pizza, Pizza, QAfterFilterCondition> ingredientsIsNotNull() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(const FilterCondition.isNotNull(
+        property: r'ingredients',
+      ));
+    });
+  }
+
   QueryBuilder<Pizza, Pizza, QAfterFilterCondition> ingredientsElementEqualTo(
     Ingredient value, {
     bool caseSensitive = true,
@@ -329,6 +368,134 @@ extension PizzaQueryFilter on QueryBuilder<Pizza, Pizza, QFilterCondition> {
         upper,
         includeUpper,
       );
+    });
+  }
+
+  QueryBuilder<Pizza, Pizza, QAfterFilterCondition> nameEqualTo(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'name',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Pizza, Pizza, QAfterFilterCondition> nameGreaterThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        include: include,
+        property: r'name',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Pizza, Pizza, QAfterFilterCondition> nameLessThan(
+    String value, {
+    bool include = false,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.lessThan(
+        include: include,
+        property: r'name',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Pizza, Pizza, QAfterFilterCondition> nameBetween(
+    String lower,
+    String upper, {
+    bool includeLower = true,
+    bool includeUpper = true,
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.between(
+        property: r'name',
+        lower: lower,
+        includeLower: includeLower,
+        upper: upper,
+        includeUpper: includeUpper,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Pizza, Pizza, QAfterFilterCondition> nameStartsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.startsWith(
+        property: r'name',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Pizza, Pizza, QAfterFilterCondition> nameEndsWith(
+    String value, {
+    bool caseSensitive = true,
+  }) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.endsWith(
+        property: r'name',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Pizza, Pizza, QAfterFilterCondition> nameContains(String value,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.contains(
+        property: r'name',
+        value: value,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Pizza, Pizza, QAfterFilterCondition> nameMatches(String pattern,
+      {bool caseSensitive = true}) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.matches(
+        property: r'name',
+        wildcard: pattern,
+        caseSensitive: caseSensitive,
+      ));
+    });
+  }
+
+  QueryBuilder<Pizza, Pizza, QAfterFilterCondition> nameIsEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'name',
+        value: '',
+      ));
+    });
+  }
+
+  QueryBuilder<Pizza, Pizza, QAfterFilterCondition> nameIsNotEmpty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.greaterThan(
+        property: r'name',
+        value: '',
+      ));
     });
   }
 

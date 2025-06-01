@@ -9,19 +9,30 @@ class OrderBottomNavigation extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
     return BottomNavigationBar(
+      //fixedColor: colors.inversePrimary,
+      selectedItemColor: colors.inverseSurface,
+      unselectedItemColor: colors.primary,
+      type: BottomNavigationBarType.shifting,
       onTap: (index) => onDestinationSelected(index, context),
       currentIndex: getCurrentIndex(context),
       items: [
         BottomNavigationBarItem(
+          backgroundColor: colors.surfaceContainerHighest,
           icon: Icon(Icons.kebab_dining),
           label: 'Ingredientes',
         ),
         BottomNavigationBarItem(
+          backgroundColor: colors.surfaceContainerHighest,
           icon: Icon(Icons.local_pizza),
           label: 'Productos',
         ),
-        BottomNavigationBarItem(icon: Icon(Icons.attach_money), label: 'Pago'),
+        BottomNavigationBarItem(
+          backgroundColor: colors.surfaceContainerHighest,
+          icon: Icon(Icons.attach_money),
+          label: 'Pago',
+        ),
       ],
     );
   }

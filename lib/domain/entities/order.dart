@@ -10,16 +10,23 @@ class Order {
   int createdBy;
 
   List<Pizza> products;
-  int? cost;
+  int cost = 0;
   DateTime? lastModified;
+  bool paid;
 
   Order({
     this.id,
     this.createdBy = -1,
     this.products = const [],
-    this.cost,
+    this.cost = 0,
     this.lastModified,
+    this.paid = false,
   }) {
+    if (products.isNotEmpty && cost == 0) {
+      for (Pizza p in products) {
+        cost += p.price;
+      }
+    }
     lastModified = DateTime.now();
   }
 

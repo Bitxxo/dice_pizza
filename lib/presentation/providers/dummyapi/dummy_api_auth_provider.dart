@@ -31,6 +31,10 @@ class AuthNotifier extends StateNotifier<AuthStatus> {
 
   AuthNotifier(this.api, this.ref) : super(AuthStatus.unauthenticated);
 
+  Future<bool> isGuest() async {
+    return await stream.last == AuthStatus.guest;
+  }
+
   ///Creates a login request with the specified parameters and uses it to log in using the api,
   ///then saves the resulting [User] in its state
   Future<void> authenticate(String user, String password) async {
@@ -42,7 +46,7 @@ class AuthNotifier extends StateNotifier<AuthStatus> {
     final DummyRequest request = DummyRequest.login(
       user,
       password,
-      expires: '1',
+      expires: '10',
     );
 
     try {
@@ -71,6 +75,8 @@ class AuthNotifier extends StateNotifier<AuthStatus> {
 
   void setGuest() {
     state = AuthStatus.guest;
+    ref.invalidate(userProvider);
+    ref.invalidate(tokenProvider);
   }
 
   Future<void> refreshSession() async {

@@ -2,8 +2,10 @@ import 'package:bloc/bloc.dart';
 import 'package:dice_pizza/domain/entities/ingredient.dart';
 import 'package:dice_pizza/domain/entities/pizza.dart';
 import 'package:dice_pizza/domain/entities/order.dart';
+import 'package:dice_pizza/presentation/bloc/order_database/order_database_bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 part 'order_contents_event.dart';
 part 'order_contents_state.dart';
@@ -27,7 +29,12 @@ class OrderContentsBloc extends Bloc<OrderContentsEvent, OrderContentsState> {
   void _onPizzaAdded(PizzaAdded event, emit) {
     if (state is OrderContentsInitial) {
       _setLoading(emit);
-      emit(OrderContentsActive(products: {0: event.pizza}));
+      emit(
+        OrderContentsActive(
+          products: {0: event.pizza},
+          totalPrice: event.pizza.price,
+        ),
+      );
     } else {
       if (_loading()) {
         return;
@@ -35,64 +42,93 @@ class OrderContentsBloc extends Bloc<OrderContentsEvent, OrderContentsState> {
         _setLoading(emit);
       }
       Map<int, Pizza> editedOrder = state.products;
-      editedOrder[editedOrder.length] = event.pizza;
-      emit(OrderContentsActive(products: editedOrder));
+      final id = editedOrder.length;
+      editedOrder[id] = event.pizza;
+      emit(
+        OrderContentsActive(
+          products: editedOrder,
+          selected: id,
+          totalPrice: _getTotalPrice(),
+        ),
+      );
     }
   }
 
   ///Elimina una pizza del pedido
   void _onPizzaRemoved(PizzaRemoved event, emit) {
-    final int id = state.selected;
     if (_loading()) {
       return;
     } else {
       _setLoading(emit);
     }
+    int id = event.index == -1 ? state.selected : event.index;
     Map<int, Pizza> editedOrder = state.products;
     editedOrder.removeWhere((index, product) => index == id);
     editedOrder = _rearrange(editedOrder);
-    emit(OrderContentsActive(products: editedOrder));
+    if (id - 1 >= 0) id--;
+    emit(
+      OrderContentsActive(
+        products: editedOrder,
+        selected: id,
+        totalPrice: _getTotalPrice(),
+      ),
+    );
   }
 
   ///Modifica una pizza ya presente en el pedido
   void _onPizzaEdited(PizzaEdited event, emit) {
-    final int id = state.selected;
     if (_loading()) {
       return;
     } else {
       _setLoading(emit);
     }
+    final int id = state.selected;
     Map<int, Pizza> editedOrder = state.products;
     editedOrder[id] = event.pizza;
-    emit(OrderContentsActive(products: editedOrder));
+    emit(
+      OrderContentsActive(
+        products: editedOrder,
+        selected: id,
+        totalPrice: _getTotalPrice(),
+      ),
+    );
   }
 
   //Elimina un ingrediente a una pizza del pedido
   void _onIngredientToggled(IngredientToggled event, emit) {
     if (_loading()) {
       return;
+    } else if (state.products.isEmpty) {
+      return;
     } else {
       _setLoading(emit);
     }
     final int id = state.selected;
     Map<int, Pizza> editedOrder = state.products;
-    Pizza? editedPizza = editedOrder[id];
-    if (editedPizza == null) {
-      emit(
-        OrderContentsError(
-          selected: state.selected,
-          products: state.products,
-          errorMessage: 'Pizza not found',
-        ),
-      );
-      return;
-    } else if (editedPizza.ingredients.contains(event.ingredient)) {
+    Pizza? editedPizza = editedOrder[id] ??= Pizza();
+    if (editedPizza.ingredients!.contains(event.ingredient)) {
       editedPizza.removeIngredient(event.ingredient);
-    } else if (!editedPizza.ingredients.contains(event.ingredient)) {
+    } else if (!editedPizza.ingredients!.contains(event.ingredient)) {
       editedPizza.addIngredient(event.ingredient);
     }
     editedOrder[id] = editedPizza;
-    emit(OrderContentsActive(products: editedOrder));
+    emit(
+      OrderContentsActive(
+        products: editedOrder,
+        selected: id,
+        totalPrice: _getTotalPrice(),
+      ),
+    );
+  }
+
+  //Calcula el precio total del pedido
+  int _getTotalPrice() {
+    if (state.products.isEmpty) return 0;
+    int total = 0;
+    for (Pizza pizza in state.products.values) {
+      total += pizza.price;
+    }
+    return total;
   }
 
   ///Reordena el map que representa el pedido
@@ -104,9 +140,14 @@ class OrderContentsBloc extends Bloc<OrderContentsEvent, OrderContentsState> {
     return newMap;
   }
 
+  ///Emite el estado de carga
   void _setLoading(Emitter<OrderContentsState> emit) {
     emit(
-      OrderContentsLoading(products: state.products, selected: state.selected),
+      OrderContentsLoading(
+        products: state.products,
+        selected: state.selected,
+        totalPrice: state.totalPrice,
+      ),
     );
   }
 

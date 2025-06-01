@@ -4,27 +4,31 @@ import 'package:flutter/material.dart';
 typedef ToggleIngredient = void Function(Ingredient name, BuildContext context);
 
 class IngredientTypeButton extends StatelessWidget {
-  const IngredientTypeButton(this.name, this.toggleIngredient, {super.key});
+  const IngredientTypeButton(
+    this.name,
+    this.toggleIngredient,
+    this.isPresent, {
+    super.key,
+  });
   final Ingredient name;
+  final bool isPresent;
   final ToggleIngredient toggleIngredient;
 
   @override
   Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
     return DecoratedBox(
       decoration: BoxDecoration(
+        color: isPresent ? colors.primaryContainer.withAlpha(170) : null,
         border: Border.all(),
         borderRadius: BorderRadius.circular(20),
       ),
-      child: SizedBox(
-        width: 100,
-        height: 50,
-        child: InkWell(
-          borderRadius: BorderRadius.circular(20),
-          hoverColor: Colors.amberAccent.shade100,
-          splashColor: Colors.amber,
-          onTap: () => toggleIngredient(name, context),
-          child: Text(name.value),
-        ),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(20),
+        hoverColor: colors.primaryContainer,
+        splashColor: colors.onPrimaryContainer.withAlpha(10),
+        onTap: () => toggleIngredient(name, context),
+        child: Center(child: Text(name.value)),
       ),
     );
   }

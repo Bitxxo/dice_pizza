@@ -32,8 +32,13 @@ const OrderSchema = CollectionSchema(
       name: r'lastModified',
       type: IsarType.dateTime,
     ),
-    r'products': PropertySchema(
+    r'paid': PropertySchema(
       id: 3,
+      name: r'paid',
+      type: IsarType.bool,
+    ),
+    r'products': PropertySchema(
+      id: 4,
       name: r'products',
       type: IsarType.objectList,
       target: r'Pizza',
@@ -79,8 +84,9 @@ void _orderSerialize(
   writer.writeLong(offsets[0], object.cost);
   writer.writeLong(offsets[1], object.createdBy);
   writer.writeDateTime(offsets[2], object.lastModified);
+  writer.writeBool(offsets[3], object.paid);
   writer.writeObjectList<Pizza>(
-    offsets[3],
+    offsets[4],
     allOffsets,
     PizzaSchema.serialize,
     object.products,
@@ -94,12 +100,13 @@ Order _orderDeserialize(
   Map<Type, List<int>> allOffsets,
 ) {
   final object = Order(
-    cost: reader.readLongOrNull(offsets[0]),
+    cost: reader.readLongOrNull(offsets[0]) ?? 0,
     createdBy: reader.readLongOrNull(offsets[1]) ?? -1,
     id: id,
     lastModified: reader.readDateTimeOrNull(offsets[2]),
+    paid: reader.readBoolOrNull(offsets[3]) ?? false,
     products: reader.readObjectList<Pizza>(
-          offsets[3],
+          offsets[4],
           PizzaSchema.deserialize,
           allOffsets,
           Pizza(),
@@ -117,12 +124,14 @@ P _orderDeserializeProp<P>(
 ) {
   switch (propertyId) {
     case 0:
-      return (reader.readLongOrNull(offset)) as P;
+      return (reader.readLongOrNull(offset) ?? 0) as P;
     case 1:
       return (reader.readLongOrNull(offset) ?? -1) as P;
     case 2:
       return (reader.readDateTimeOrNull(offset)) as P;
     case 3:
+      return (reader.readBoolOrNull(offset) ?? false) as P;
+    case 4:
       return (reader.readObjectList<Pizza>(
             offset,
             PizzaSchema.deserialize,
@@ -223,23 +232,7 @@ extension OrderQueryWhere on QueryBuilder<Order, Order, QWhereClause> {
 }
 
 extension OrderQueryFilter on QueryBuilder<Order, Order, QFilterCondition> {
-  QueryBuilder<Order, Order, QAfterFilterCondition> costIsNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNull(
-        property: r'cost',
-      ));
-    });
-  }
-
-  QueryBuilder<Order, Order, QAfterFilterCondition> costIsNotNull() {
-    return QueryBuilder.apply(this, (query) {
-      return query.addFilterCondition(const FilterCondition.isNotNull(
-        property: r'cost',
-      ));
-    });
-  }
-
-  QueryBuilder<Order, Order, QAfterFilterCondition> costEqualTo(int? value) {
+  QueryBuilder<Order, Order, QAfterFilterCondition> costEqualTo(int value) {
     return QueryBuilder.apply(this, (query) {
       return query.addFilterCondition(FilterCondition.equalTo(
         property: r'cost',
@@ -249,7 +242,7 @@ extension OrderQueryFilter on QueryBuilder<Order, Order, QFilterCondition> {
   }
 
   QueryBuilder<Order, Order, QAfterFilterCondition> costGreaterThan(
-    int? value, {
+    int value, {
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
@@ -262,7 +255,7 @@ extension OrderQueryFilter on QueryBuilder<Order, Order, QFilterCondition> {
   }
 
   QueryBuilder<Order, Order, QAfterFilterCondition> costLessThan(
-    int? value, {
+    int value, {
     bool include = false,
   }) {
     return QueryBuilder.apply(this, (query) {
@@ -275,8 +268,8 @@ extension OrderQueryFilter on QueryBuilder<Order, Order, QFilterCondition> {
   }
 
   QueryBuilder<Order, Order, QAfterFilterCondition> costBetween(
-    int? lower,
-    int? upper, {
+    int lower,
+    int upper, {
     bool includeLower = true,
     bool includeUpper = true,
   }) {
@@ -481,6 +474,15 @@ extension OrderQueryFilter on QueryBuilder<Order, Order, QFilterCondition> {
     });
   }
 
+  QueryBuilder<Order, Order, QAfterFilterCondition> paidEqualTo(bool value) {
+    return QueryBuilder.apply(this, (query) {
+      return query.addFilterCondition(FilterCondition.equalTo(
+        property: r'paid',
+        value: value,
+      ));
+    });
+  }
+
   QueryBuilder<Order, Order, QAfterFilterCondition> productsLengthEqualTo(
       int length) {
     return QueryBuilder.apply(this, (query) {
@@ -613,6 +615,18 @@ extension OrderQuerySortBy on QueryBuilder<Order, Order, QSortBy> {
       return query.addSortBy(r'lastModified', Sort.desc);
     });
   }
+
+  QueryBuilder<Order, Order, QAfterSortBy> sortByPaid() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'paid', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Order, Order, QAfterSortBy> sortByPaidDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'paid', Sort.desc);
+    });
+  }
 }
 
 extension OrderQuerySortThenBy on QueryBuilder<Order, Order, QSortThenBy> {
@@ -663,6 +677,18 @@ extension OrderQuerySortThenBy on QueryBuilder<Order, Order, QSortThenBy> {
       return query.addSortBy(r'lastModified', Sort.desc);
     });
   }
+
+  QueryBuilder<Order, Order, QAfterSortBy> thenByPaid() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'paid', Sort.asc);
+    });
+  }
+
+  QueryBuilder<Order, Order, QAfterSortBy> thenByPaidDesc() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addSortBy(r'paid', Sort.desc);
+    });
+  }
 }
 
 extension OrderQueryWhereDistinct on QueryBuilder<Order, Order, QDistinct> {
@@ -683,6 +709,12 @@ extension OrderQueryWhereDistinct on QueryBuilder<Order, Order, QDistinct> {
       return query.addDistinctBy(r'lastModified');
     });
   }
+
+  QueryBuilder<Order, Order, QDistinct> distinctByPaid() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addDistinctBy(r'paid');
+    });
+  }
 }
 
 extension OrderQueryProperty on QueryBuilder<Order, Order, QQueryProperty> {
@@ -692,7 +724,7 @@ extension OrderQueryProperty on QueryBuilder<Order, Order, QQueryProperty> {
     });
   }
 
-  QueryBuilder<Order, int?, QQueryOperations> costProperty() {
+  QueryBuilder<Order, int, QQueryOperations> costProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'cost');
     });
@@ -707,6 +739,12 @@ extension OrderQueryProperty on QueryBuilder<Order, Order, QQueryProperty> {
   QueryBuilder<Order, DateTime?, QQueryOperations> lastModifiedProperty() {
     return QueryBuilder.apply(this, (query) {
       return query.addPropertyName(r'lastModified');
+    });
+  }
+
+  QueryBuilder<Order, bool, QQueryOperations> paidProperty() {
+    return QueryBuilder.apply(this, (query) {
+      return query.addPropertyName(r'paid');
     });
   }
 

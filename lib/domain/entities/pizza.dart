@@ -1,4 +1,5 @@
 import 'package:dice_pizza/domain/entities/ingredient.dart';
+import 'package:flutter/foundation.dart';
 import 'package:isar/isar.dart';
 
 part 'pizza.g.dart';
@@ -6,22 +7,47 @@ part 'pizza.g.dart';
 @embedded
 class Pizza {
   @Enumerated(EnumType.name)
-  List<Ingredient> ingredients;
+  List<Ingredient>? ingredients = [];
+  String name = '';
 
   int price;
-  Pizza({this.ingredients = const [], this.price = 2});
+  Pizza({this.ingredients, this.price = 3, this.name = ''}) {
+    ingredients ??= [];
+    price = 3 + ingredients!.length * 2;
+    name = getName();
+    ingredients!.sort((a, b) => a.value.compareTo(b.value));
+  }
+
+  String readableIngredients() {
+    String result = '';
+    if (ingredients == null || ingredients!.isEmpty) {
+      return 'Solo tomate y queso';
+    }
+    for (Ingredient i in ingredients!) {
+      result += i.value;
+      if (i != ingredients!.lastOrNull) {
+        result += ', ';
+      }
+    }
+    return result;
+  }
 
   void addIngredient(Ingredient ingredient) {
-    if (!ingredients.contains(ingredient)) {
-      ingredients.add(ingredient);
+    if (!ingredients!.contains(ingredient)) {
+      ingredients!.add(ingredient);
+      price += 2;
+      ingredients!.sort((a, b) => a.value.compareTo(b.value));
+      name = getName();
     } else {
       return;
     }
   }
 
   void removeIngredient(Ingredient ingredient) {
-    if (ingredients.contains(ingredient)) {
-      ingredients.remove(ingredient);
+    if (ingredients!.contains(ingredient)) {
+      ingredients!.remove(ingredient);
+      price -= 2;
+      name = getName();
     } else {
       return;
     }
@@ -40,9 +66,103 @@ class Pizza {
   );
 
   Map<String, dynamic> toJson() => {
-    "ingredients": List<dynamic>.from(ingredients.map((x) => x)),
+    "ingredients": List<dynamic>.from(ingredients!.map((x) => x)),
     "price": price,
+  };
+
+  String getName() {
+    final name =
+        pizzaTypeIngredients.entries
+            .where(
+              (entry) => listEquals(
+                entry.value.toSet().toList(),
+                ingredients?.toSet().toList(),
+              ),
+            )
+            .firstOrNull
+            ?.key;
+    return name ?? 'Personalizada';
+  }
+
+  factory Pizza.fromType(PizzaTypes type) => switch (type.name) {
+    'barbacoa' => Pizza(ingredients: [Ingredient.bacon, Ingredient.cebolla]),
+    'vegetal' => Pizza(
+      ingredients: [
+        Ingredient.cebolla,
+        Ingredient.champinon,
+        Ingredient.pimiento,
+      ],
+    ),
+    'hawaiana' => Pizza(ingredients: [Ingredient.jamon, Ingredient.pina]),
+    'vegana' => Pizza(
+      ingredients: [
+        Ingredient.cebolla,
+        Ingredient.champinon,
+        Ingredient.pimiento,
+        Ingredient.polloVegano,
+      ],
+    ),
+    'carnaca' => Pizza(
+      ingredients: [Ingredient.bacon, Ingredient.jamon, Ingredient.pollo],
+    ),
+    'carbonara' => Pizza(
+      ingredients: [Ingredient.bacon, Ingredient.cebolla, Ingredient.champinon],
+    ),
+    'marinera' => Pizza(
+      ingredients: [
+        Ingredient.atun,
+        Ingredient.cebolla,
+        Ingredient.olivas,
+        Ingredient.pimiento,
+      ],
+    ),
+    'confusa' => Pizza(
+      ingredients: [
+        Ingredient.bacon,
+        Ingredient.pina,
+        Ingredient.polloVegano,
+        Ingredient.queso,
+      ],
+    ),
+    'margarita' || _ => Pizza(ingredients: []),
   };
 }
 
-enum PizzaTypes { margarita, barbacoa, vegetal, hawaiana }
+enum PizzaTypes {
+  margarita,
+  barbacoa,
+  vegetal,
+  hawaiana,
+  vegana,
+  carnaca,
+  carbonara,
+  marinera,
+  confusa,
+}
+
+Map<String, List<Ingredient>> pizzaTypeIngredients = {
+  'Margarita': [],
+  'Barbacoa': [Ingredient.bacon, Ingredient.cebolla],
+  'Vegetal': [Ingredient.cebolla, Ingredient.champinon, Ingredient.pimiento],
+  'Hawaiana': [Ingredient.jamon, Ingredient.pina],
+  'Vegana': [
+    Ingredient.polloVegano,
+    Ingredient.pimiento,
+    Ingredient.champinon,
+    Ingredient.cebolla,
+  ],
+  'Carnaca': [Ingredient.bacon, Ingredient.jamon, Ingredient.pollo],
+  'Carbonara': [Ingredient.bacon, Ingredient.cebolla, Ingredient.champinon],
+  'Marinera': [
+    Ingredient.atun,
+    Ingredient.cebolla,
+    Ingredient.olivas,
+    Ingredient.pimiento,
+  ],
+  'Confusa': [
+    Ingredient.polloVegano,
+    Ingredient.queso,
+    Ingredient.pina,
+    Ingredient.bacon,
+  ],
+};

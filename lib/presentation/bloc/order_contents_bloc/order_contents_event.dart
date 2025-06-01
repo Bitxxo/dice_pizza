@@ -5,40 +5,46 @@ sealed class OrderContentsEvent {
   const OrderContentsEvent();
 }
 
-final class PizzaSelected extends OrderContentsEvent {
+class PizzaSelected extends OrderContentsEvent {
   final int index;
   const PizzaSelected(this.index);
 }
 
-final class PizzaAdded extends OrderContentsEvent {
+class PizzaAdded extends OrderContentsEvent {
   final Pizza pizza;
   const PizzaAdded(this.pizza);
 }
 
-final class PizzaRemoved extends OrderContentsEvent {
+class PizzaRemoved extends OrderContentsEvent {
   final int index;
-  const PizzaRemoved(this.index);
+  const PizzaRemoved({this.index = -1});
 }
 
-final class PizzaEdited extends OrderContentsEvent {
+class PizzaEdited extends OrderContentsEvent {
   final Pizza pizza;
   const PizzaEdited(this.pizza);
 }
 
-final class IngredientToggled extends OrderContentsEvent {
+class IngredientToggled extends OrderContentsEvent {
   final Ingredient ingredient;
   const IngredientToggled(this.ingredient);
 }
+/*
 
 class SaveOrder extends OrderContentsEvent {
-  final Order order;
-  const SaveOrder(this.order);
+  final int userId;
+  const SaveOrder(this.userId);
 }
 
 class UpdateOrder extends OrderContentsEvent {
   final Order order;
   final int orderId;
-  const UpdateOrder({required this.order, required this.orderId});
+  final int userId;
+  const UpdateOrder({
+    required this.order,
+    required this.orderId,
+    required this.userId,
+  });
 }
 
 class DeleteOrder extends OrderContentsEvent {
@@ -50,3 +56,4 @@ class ReadOrder extends OrderContentsEvent {
   final int orderId;
   const ReadOrder(this.orderId);
 }
+*/

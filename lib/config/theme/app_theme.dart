@@ -16,7 +16,7 @@ const listaColores = <Color>[
 class AppTheme {
   final int seleccionado;
 
-  AppTheme({this.seleccionado = 1})
+  AppTheme({this.seleccionado = 9})
     : assert(seleccionado >= 0, 'El color debe ser mayor que 0'),
       assert(
         seleccionado < listaColores.length,

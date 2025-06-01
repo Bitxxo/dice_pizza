@@ -1,18 +1,25 @@
 import 'package:dice_pizza/domain/entities/pizza.dart';
 import 'package:flutter/material.dart';
 
-typedef AddProduct = void Function(Pizza pizza, BuildContext context);
+typedef ChangeType = void Function(Pizza pizza, BuildContext context);
 
 class PizzaTypeButton extends StatelessWidget {
-  const PizzaTypeButton(this.type, this.addPizza, {super.key});
+  const PizzaTypeButton(
+    this.type,
+    this.addPizza,
+    this.isCurrentType, {
+    super.key,
+  });
   final PizzaTypes type;
-  final AddProduct addPizza;
+  final ChangeType addPizza;
+  final bool isCurrentType;
 
   @override
   Widget build(BuildContext context) {
-    final Pizza pizza = Pizza();
+    final colors = Theme.of(context).colorScheme;
     return DecoratedBox(
       decoration: BoxDecoration(
+        color: isCurrentType ? colors.primaryContainer.withAlpha(170) : null,
         border: Border.all(),
         borderRadius: BorderRadius.circular(20),
       ),
@@ -23,7 +30,7 @@ class PizzaTypeButton extends StatelessWidget {
           borderRadius: BorderRadius.circular(20),
           hoverColor: Colors.amberAccent.shade100,
           splashColor: Colors.amber,
-          onTap: () => addPizza(pizza, context),
+          onTap: () => addPizza(Pizza.fromType(type), context),
           child: Center(child: Text(type.name)),
         ),
       ),

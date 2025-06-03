@@ -19,7 +19,7 @@ class OrderBackButton extends StatelessWidget {
           if (isUnsaved && hasContent) {
             exitAlert(context);
           } else {
-            context.pop();
+            context.go(RouterPaths.home);
           }
         },
         icon: Icon(Icons.arrow_back, size: 20, color: Colors.white),

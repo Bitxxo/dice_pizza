@@ -67,6 +67,7 @@ class OrderIsarDatasource extends OrderDatasource {
       final query = isar.orders.buildQuery(
         limit: (page + 1) * 10,
         offset: page * 10,
+        sortBy: [SortProperty(property: 'lastModified', sort: Sort.asc)],
       );
       final results = await query.findAll();
       return results.whereType<Order>().toList();

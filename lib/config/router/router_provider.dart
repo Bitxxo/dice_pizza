@@ -1,4 +1,5 @@
 import 'package:dice_pizza/config/router/navigation_constants.dart';
+import 'package:dice_pizza/presentation/bloc/existing_order_bloc_injection.dart';
 import 'package:dice_pizza/presentation/providers/dummyapi/dummy_api_auth_provider.dart';
 import 'package:dice_pizza/presentation/providers/dummyapi/dummy_api_user_provider.dart';
 import 'package:dice_pizza/presentation/screens/existing_order_screen.dart';
@@ -66,13 +67,20 @@ List<RouteBase> _routes = [
             builder: (context, state, child) => NewOrderScreen(child),
             routes: _orderEditingFlow,
           ),
-          GoRoute(
-            path: '/database',
-            builder: (context, state) => const OrderDatabaseScreen(),
+          ShellRoute(
+            builder:
+                (context, state, child) => ExistingOrderBlocInjection(child),
             routes: [
-              ShellRoute(
-                builder: (context, state, child) => ExistingOrderScreen(child),
-                routes: _orderEditingFlow,
+              GoRoute(
+                path: '/database',
+                builder: (context, state) => const OrderDatabaseScreen(),
+                routes: [
+                  ShellRoute(
+                    builder:
+                        (context, state, child) => ExistingOrderScreen(child),
+                    routes: _orderEditingFlow,
+                  ),
+                ],
               ),
             ],
           ),

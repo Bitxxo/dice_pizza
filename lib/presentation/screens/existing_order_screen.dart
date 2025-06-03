@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 class ExistingOrderScreen extends StatefulWidget {
-  static const name = "CreateOrder";
+  static const name = "EditOrder";
   const ExistingOrderScreen(this.child, {super.key});
   final Widget? child;
 
@@ -15,8 +15,7 @@ class ExistingOrderScreen extends StatefulWidget {
 class _ExistingOrderScreenState extends State<ExistingOrderScreen> {
   @override
   Widget build(BuildContext context) {
-    return BlocProvider(
-      create: (context) => OrderContentsBloc(),
+    return SafeArea(
       child: Scaffold(
         bottomNavigationBar: OrderBottomNavigation(),
         body: Center(child: widget.child ?? Placeholder()),

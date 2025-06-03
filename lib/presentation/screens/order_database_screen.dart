@@ -1,9 +1,11 @@
 import 'package:dice_pizza/domain/entities/order.dart';
+import 'package:dice_pizza/presentation/bloc/order_contents/order_contents_bloc.dart';
 import 'package:dice_pizza/presentation/bloc/order_database/order_database_bloc.dart';
 import 'package:dice_pizza/presentation/widgets/order_list_tile.dart';
 import 'package:dice_pizza/presentation/widgets/shared/loading_box.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 
 class OrderDatabaseScreen extends StatelessWidget {
   const OrderDatabaseScreen({super.key});
@@ -13,17 +15,20 @@ class OrderDatabaseScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final size = MediaQuery.of(context).size;
     final colors = Theme.of(context).colorScheme;
-    return BlocProvider(
-      create: (context) => OrderDatabaseBloc(),
-      child: Scaffold(
-        appBar: AppBar(title: Text('Pedidos almacenados')),
-        backgroundColor: colors.primaryContainer,
-        body: Center(
-          child: SizedBox(
-            width: size.width * 0.5,
-            height: size.height * 0.5,
-            child: _OrderListView(),
-          ),
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Pedidos almacenados'),
+        leading: IconButton(
+          onPressed: () => context.pop(),
+          icon: Icon(Icons.arrow_back),
+        ),
+      ),
+      backgroundColor: colors.primaryContainer,
+      body: Center(
+        child: SizedBox(
+          width: size.width * 0.5,
+          height: size.height * 0.5,
+          child: _OrderListView(),
         ),
       ),
     );

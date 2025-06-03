@@ -150,6 +150,7 @@ class OrderContentsBloc extends Bloc<OrderContentsEvent, OrderContentsState> {
       );
       return;
     }
+    print(event.order);
     emit(
       OrderContentsActive(
         products: state.products,
@@ -167,6 +168,7 @@ class OrderContentsBloc extends Bloc<OrderContentsEvent, OrderContentsState> {
     final loaded = OrderContentsActive(
       products: _loadProducts(event.order.products),
       order: event.order,
+      saved: true,
     );
     emit(loaded);
   }
@@ -207,6 +209,7 @@ class OrderContentsBloc extends Bloc<OrderContentsEvent, OrderContentsState> {
         products: state.products,
         selected: state.selected,
         totalPrice: state.totalPrice,
+        order: state.order,
       ),
     );
   }

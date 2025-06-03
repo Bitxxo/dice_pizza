@@ -18,66 +18,10 @@ class Pizza {
     ingredients!.sort((a, b) => a.value.compareTo(b.value));
   }
 
-  String readableIngredients() {
-    String result = '';
-    if (ingredients == null || ingredients!.isEmpty) {
-      return 'Solo tomate y queso';
-    }
-    for (Ingredient i in ingredients!) {
-      result += i.value;
-      if (i != ingredients!.lastOrNull) {
-        result += ', ';
-      }
-    }
-    return result;
-  }
-
-  void addIngredient(Ingredient ingredient) {
-    if (!ingredients!.contains(ingredient)) {
-      ingredients!.add(ingredient);
-      price += 2;
-      ingredients!.sort((a, b) => a.value.compareTo(b.value));
-      name = getName();
-    } else {
-      return;
-    }
-  }
-
-  void removeIngredient(Ingredient ingredient) {
-    if (ingredients!.contains(ingredient)) {
-      ingredients!.remove(ingredient);
-      price -= 2;
-      name = getName();
-    } else {
-      return;
-    }
-  }
-
-  Pizza copyWith({List<Ingredient>? ingredients, int? price, int? orderId}) {
-    return Pizza(
-      ingredients: ingredients ?? this.ingredients,
-      price: price ?? this.price,
-    );
-  }
-
   factory Pizza.fromJson(Map<String, dynamic> json) => Pizza(
     ingredients: List<Ingredient>.from(json["ingredients"].map((x) => x)),
     price: json["price"],
   );
-
-  Map<String, dynamic> toJson() => {
-    "ingredients": List<dynamic>.from(ingredients!.map((x) => x)),
-    "price": price,
-  };
-
-  String getName() {
-    final name =
-        pizzaTypeIngredients.entries
-            .where((entry) => listEquals(entry.value, ingredients))
-            .firstOrNull
-            ?.key;
-    return name ?? 'Personalizada';
-  }
 
   factory Pizza.fromType(PizzaTypes type) => switch (type.name) {
     'barbacoa' => Pizza(ingredients: [Ingredient.bacon, Ingredient.cebolla]),
@@ -120,6 +64,62 @@ class Pizza {
       ],
     ),
     'margarita' || _ => Pizza(ingredients: []),
+  };
+
+  void addIngredient(Ingredient ingredient) {
+    if (!ingredients!.contains(ingredient)) {
+      ingredients!.add(ingredient);
+      price += 2;
+      ingredients!.sort((a, b) => a.value.compareTo(b.value));
+      name = getName();
+    } else {
+      return;
+    }
+  }
+
+  Pizza copyWith({List<Ingredient>? ingredients, int? price, int? orderId}) {
+    return Pizza(
+      ingredients: ingredients ?? this.ingredients,
+      price: price ?? this.price,
+    );
+  }
+
+  String getName() {
+    final name =
+        pizzaTypeIngredients.entries
+            .where((entry) => listEquals(entry.value, ingredients))
+            .firstOrNull
+            ?.key;
+    return name ?? 'Personalizada';
+  }
+
+  String readableIngredients() {
+    String result = '';
+    if (ingredients == null || ingredients!.isEmpty) {
+      return 'Solo tomate y queso';
+    }
+    for (Ingredient i in ingredients!) {
+      result += i.value;
+      if (i != ingredients!.lastOrNull) {
+        result += ', ';
+      }
+    }
+    return result;
+  }
+
+  void removeIngredient(Ingredient ingredient) {
+    if (ingredients!.contains(ingredient)) {
+      ingredients!.remove(ingredient);
+      price -= 2;
+      name = getName();
+    } else {
+      return;
+    }
+  }
+
+  Map<String, dynamic> toJson() => {
+    "ingredients": List<dynamic>.from(ingredients!.map((x) => x)),
+    "price": price,
   };
 }
 

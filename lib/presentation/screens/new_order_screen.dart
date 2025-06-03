@@ -27,9 +27,11 @@ class NewOrderScreen extends ConsumerWidget {
         ),
         BlocProvider(create: (context) => OrderContentsBloc()),
       ],
-      child: Scaffold(
-        bottomNavigationBar: OrderBottomNavigation(),
-        body: Center(child: child ?? Placeholder()),
+      child: SafeArea(
+        child: Scaffold(
+          bottomNavigationBar: OrderBottomNavigation(),
+          body: Center(child: child ?? Placeholder()),
+        ),
       ),
     );
   }

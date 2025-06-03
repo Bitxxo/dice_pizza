@@ -1,4 +1,5 @@
 import 'package:dice_pizza/domain/entities/pizza.dart';
+import 'package:dice_pizza/extensions/last_modified_format.dart';
 import 'package:isar/isar.dart';
 
 part 'order.g.dart';
@@ -29,7 +30,7 @@ class Order {
         cost += p.price;
       }
     }
-    lastModified = DateTime.now();
+    lastModified ??= DateTime.now();
   }
 
   Order copyWith({
@@ -45,5 +46,19 @@ class Order {
       cost: cost ?? this.cost,
       lastModified: DateTime.now(),
     );
+  }
+
+  @override
+  String toString() {
+    return 'Order $id, contents: $products';
+  }
+
+  String get lastModifiedDate => lastModified!.lastModifiedFormat();
+  String get productNames {
+    String names = '';
+    for (Pizza p in products) {
+      names += '[${p.name}] ';
+    }
+    return names;
   }
 }

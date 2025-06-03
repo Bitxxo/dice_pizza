@@ -5,13 +5,10 @@ class LoadingBox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return DecoratedBox(
-      decoration: BoxDecoration(border: Border.all()),
-      child: SizedBox(
-        height: 75,
-        width: 75,
-        child: CircularProgressIndicator(strokeWidth: 2),
-      ),
+    return SizedBox(
+      height: 50,
+      width: 50,
+      child: CircularProgressIndicator(strokeWidth: 2),
     );
   }
 }

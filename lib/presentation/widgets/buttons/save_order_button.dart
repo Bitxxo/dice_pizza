@@ -1,6 +1,8 @@
 import 'package:dice_pizza/presentation/bloc/order_contents/order_contents_bloc.dart';
+import 'package:dice_pizza/presentation/bloc/order_database/order_database_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class SaveOrderButton extends StatelessWidget {
   final bool bigScreen;
@@ -17,24 +19,29 @@ class SaveOrderButton extends StatelessWidget {
   }
 }
 
-class _SaveButton extends StatelessWidget {
+class _SaveButton extends ConsumerWidget {
   const _SaveButton({required this.bigScreen});
   final bool bigScreen;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return FilledButton.icon(
       onPressed: () async {
-        context.read<OrderContentsBloc>().add(SaveOrderContents(context));
-        await Future.delayed(Duration(milliseconds: 200));
+        context.read<OrderDatabaseBloc>().add(SaveOrder(context));
         if (context.mounted) {
-          final state = context.read<OrderContentsBloc>().state;
-          if (state is OrderContentsError) {
+          final orderState = context.read<OrderContentsBloc>().state;
+          final dbState = context.read<OrderDatabaseBloc>().state;
+          if (orderState is OrderContentsError) {
             ScaffoldMessenger.of(context).clearSnackBars();
             ScaffoldMessenger.of(
               context,
-            ).showSnackBar(SnackBar(content: Text(state.errorMessage)));
-          } else if (state is OrderContentsActive) {
+            ).showSnackBar(SnackBar(content: Text(orderState.errorMessage)));
+          } else if (dbState is OrderDatabaseError) {
+            ScaffoldMessenger.of(context).clearSnackBars();
+            ScaffoldMessenger.of(
+              context,
+            ).showSnackBar(SnackBar(content: Text(dbState.message)));
+          } else if (orderState is OrderContentsActive) {
             ScaffoldMessenger.of(context).clearSnackBars();
             ScaffoldMessenger.of(
               context,

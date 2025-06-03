@@ -1,7 +1,6 @@
 import 'package:dice_pizza/domain/entities/ingredient.dart';
 import 'package:dice_pizza/domain/entities/pizza.dart';
 import 'package:dice_pizza/domain/entities/order.dart';
-import 'package:dice_pizza/presentation/bloc/order_database/order_database_bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -10,16 +9,14 @@ part 'order_contents_event.dart';
 part 'order_contents_state.dart';
 
 class OrderContentsBloc extends Bloc<OrderContentsEvent, OrderContentsState> {
-  final int userId;
-  final String username;
-  OrderContentsBloc(this.userId, this.username)
-    : super(OrderContentsInitial()) {
+  OrderContentsBloc() : super(OrderContentsInitial()) {
+    on<OrderContentsRead>((event, emit) => _readOrder(event, emit));
     on<PizzaSelected>((event, emit) => _onPizzaSelected(event, emit));
     on<PizzaAdded>((event, emit) => _onPizzaAdded(event, emit));
     on<PizzaRemoved>((event, emit) => _onPizzaRemoved(event, emit));
     on<PizzaEdited>((event, emit) => _onPizzaEdited(event, emit));
     on<IngredientToggled>((event, emit) => _onIngredientToggled(event, emit));
-    on<SaveOrderContents>((event, emit) => _saveOrder(event, emit));
+    on<OrderContentsSaved>((event, emit) => _saveOrder(event, emit));
     on<OrderContentsEvent>((event, emit) {});
   }
 
@@ -50,6 +47,8 @@ class OrderContentsBloc extends Bloc<OrderContentsEvent, OrderContentsState> {
           products: editedOrder,
           selected: id,
           totalPrice: _getTotalPrice(),
+          order: state.order,
+          saved: false,
         ),
       );
     }
@@ -72,6 +71,8 @@ class OrderContentsBloc extends Bloc<OrderContentsEvent, OrderContentsState> {
         products: editedOrder,
         selected: id,
         totalPrice: _getTotalPrice(),
+        order: state.order,
+        saved: false,
       ),
     );
   }
@@ -91,6 +92,8 @@ class OrderContentsBloc extends Bloc<OrderContentsEvent, OrderContentsState> {
         products: editedOrder,
         selected: id,
         totalPrice: _getTotalPrice(),
+        order: state.order,
+        saved: false,
       ),
     );
   }
@@ -126,52 +129,46 @@ class OrderContentsBloc extends Bloc<OrderContentsEvent, OrderContentsState> {
         products: editedOrder,
         selected: id,
         totalPrice: _getTotalPrice(),
+        order: state.order,
+        saved: false,
       ),
     );
   }
 
-  Future<void> _saveOrder(SaveOrderContents event, emit) async {
-    final context = event.context;
+  Future<void> _saveOrder(OrderContentsSaved event, emit) async {
     if (_loading()) {
       return;
-    } else if (state.products == {} ||
-        state.products.isEmpty ||
-        state is OrderContentsInitial) {
+    }
+    _setLoading(emit);
+    if (event.order.id == null) {
       emit(
         OrderContentsError(
-          products: {},
+          products: state.products,
           selected: state.selected,
-          errorMessage: 'No se puede guardar un pedido vacío',
+          errorMessage: 'Error al almacenar pedido',
         ),
       );
       return;
-    } else {
-      _setLoading(emit);
-      final Order order = Order(
-        createdBy: userId,
-        creatorName: username,
-        products: state.products.values.toList(),
-      );
-      context.read<OrderDatabaseBloc>().add(SaveOrder(order));
-      final int? currentOrderId = context.read<OrderDatabaseBloc>().state.id;
-      if (currentOrderId == null) {
-        emit(
-          OrderContentsError(
-            products: state.products,
-            selected: state.selected,
-            errorMessage: 'Error al guardar pedido',
-          ),
-        );
-      } else {
-        emit(
-          OrderContentsActive(
-            products: state.products,
-            order: state.order?.copyWith(id: currentOrderId),
-            selected: state.selected,
-          ),
-        );
-      }
     }
+    emit(
+      OrderContentsActive(
+        products: state.products,
+        order: event.order,
+        selected: state.selected,
+        saved: true,
+      ),
+    );
+  }
+
+  //carga un pedido ya creado
+  Future<void> _readOrder(OrderContentsRead event, emit) async {
+    if (_loading()) return;
+    _setLoading(emit);
+    final loaded = OrderContentsActive(
+      products: _loadProducts(event.order.products),
+      order: event.order,
+    );
+    emit(loaded);
   }
 
   //Calcula el precio total del pedido
@@ -182,6 +179,16 @@ class OrderContentsBloc extends Bloc<OrderContentsEvent, OrderContentsState> {
       total += pizza.price;
     }
     return total;
+  }
+
+  Map<int, Pizza> _loadProducts(List<Pizza> list) {
+    int i = 0;
+    Map<int, Pizza> products = {};
+    for (Pizza p in list) {
+      products.addAll({i: p});
+      i++;
+    }
+    return products;
   }
 
   ///Reordena el map que representa el pedido

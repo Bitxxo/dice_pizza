@@ -30,20 +30,12 @@ class IngredientToggled extends OrderContentsEvent {
   const IngredientToggled(this.ingredient);
 }
 
-class SaveOrderContents extends OrderContentsEvent {
-  final BuildContext context;
-  const SaveOrderContents(this.context);
+class OrderContentsSaved extends OrderContentsEvent {
+  final Order order;
+  const OrderContentsSaved(this.order);
 }
 
-class UpdateOrder extends OrderContentsEvent {
-  const UpdateOrder();
-}
-
-class DeleteOrder extends OrderContentsEvent {
-  const DeleteOrder();
-}
-
-class ReadOrder extends OrderContentsEvent {
-  final int orderId;
-  const ReadOrder(this.orderId);
+class OrderContentsRead extends OrderContentsEvent {
+  final Order order;
+  const OrderContentsRead(this.order);
 }

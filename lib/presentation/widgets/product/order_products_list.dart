@@ -12,15 +12,14 @@ class OrderProductsList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final OrderContentsState state = context.watch<OrderContentsBloc>().state;
-    final selected = context.watch<OrderContentsBloc>().state.selected;
-    final products = context.watch<OrderContentsBloc>().state.products;
+    final selected = state.selected;
+    final products = state.products;
     if (state is OrderContentsLoading) {
-      final placeholders = products.length;
-      return Row(
-        children: [for (int i = 0; i < placeholders; i++) LoadingBox()],
+      return _ProductsScrollView(
+        products: products,
+        selected: selected,
+        loading: true,
       );
-    } else if (state is OrderContentsError) {
-      return _ProductsScrollView(products: products, selected: selected);
     } else {
       return _ProductsScrollView(products: products, selected: selected);
     }
@@ -28,33 +27,51 @@ class OrderProductsList extends StatelessWidget {
 }
 
 class _ProductsScrollView extends StatelessWidget {
-  const _ProductsScrollView({required this.products, required this.selected});
+  const _ProductsScrollView({
+    required this.products,
+    required this.selected,
+    this.loading = false,
+  });
 
   final Map<int, Pizza> products;
   final int selected;
+  final bool loading;
 
   @override
   Widget build(BuildContext context) {
     return SizedBox(
       height: 250,
-      child: SingleChildScrollView(
-        padding: EdgeInsets.all(10),
-        reverse: true,
-        scrollDirection: Axis.horizontal,
-        physics: BouncingScrollPhysics(),
-        child: Row(
-          spacing: 10,
+      child: Scrollbar(
+        child: ListView(
+          primary: true,
+          shrinkWrap: true,
+          padding: EdgeInsets.all(10),
+          scrollDirection: Axis.horizontal,
+          physics: BouncingScrollPhysics(),
           children: [
             for (int i = 0; i < products.length; i++)
-              FadeInRight(
-                child: PizzaDisplay(
-                  pizza: products[i]!,
-                  index: i,
-                  selected: i == selected,
-                ),
+              Row(
+                children: [
+                  loading
+                      ? PizzaDisplay(
+                        pizza: products[i]!,
+                        index: i,
+                        selected: i == selected,
+                        loading: true,
+                      )
+                      : FadeInRight(
+                        child: PizzaDisplay(
+                          pizza: products[i]!,
+                          index: i,
+                          selected: i == selected,
+                        ),
+                      ),
+                  SizedBox(width: 20),
+                ],
               ),
             SizedBox(width: 100),
             Stack(
+              alignment: AlignmentDirectional.center,
               children: [
                 SizedBox(width: 50),
                 IconButton.filled(

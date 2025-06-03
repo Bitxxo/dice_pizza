@@ -8,8 +8,8 @@ abstract class OrderDatabaseEvent extends Equatable {
 }
 
 class SaveOrder extends OrderDatabaseEvent {
-  final Order order;
-  const SaveOrder(this.order);
+  final BuildContext context;
+  const SaveOrder(this.context);
 }
 
 class UpdateOrder extends OrderDatabaseEvent {
@@ -37,3 +37,5 @@ class ReadAllOrdersByUser extends OrderDatabaseEvent {
   final int creator;
   const ReadAllOrdersByUser(this.creator);
 }
+
+class ResetSearch extends OrderDatabaseEvent {}

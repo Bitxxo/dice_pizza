@@ -1,6 +1,8 @@
 import 'package:dice_pizza/config/router/navigation_constants.dart';
 import 'package:dice_pizza/presentation/providers/dummyapi/dummy_api_auth_provider.dart';
 import 'package:dice_pizza/presentation/providers/dummyapi/dummy_api_user_provider.dart';
+import 'package:dice_pizza/presentation/screens/existing_order_screen.dart';
+import 'package:dice_pizza/presentation/screens/order_database_screen.dart';
 import 'package:dice_pizza/presentation/screens/home_screen.dart';
 import 'package:dice_pizza/presentation/screens/login_screen.dart';
 import 'package:dice_pizza/presentation/screens/new_order_screen.dart';
@@ -55,29 +57,42 @@ List<RouteBase> _routes = [
         path: 'u',
         name: HomeScreen.name,
         builder: (context, state) => const HomeScreen(),
-        routes: _orderCreationFlow,
+        routes: [
+          GoRoute(
+            path: '/profile',
+            builder: (context, state) => const ProfileScreen(),
+          ),
+          ShellRoute(
+            builder: (context, state, child) => NewOrderScreen(child),
+            routes: _orderEditingFlow,
+          ),
+          GoRoute(
+            path: '/database',
+            builder: (context, state) => const OrderDatabaseScreen(),
+            routes: [
+              ShellRoute(
+                builder: (context, state, child) => ExistingOrderScreen(child),
+                routes: _orderEditingFlow,
+              ),
+            ],
+          ),
+        ],
       ),
     ],
   ),
 ];
 
-List<RouteBase> _orderCreationFlow = [
-  GoRoute(path: '/profile', builder: (context, state) => const ProfileScreen()),
-  ShellRoute(
-    builder: (context, state, child) => NewOrderScreen(child, null),
-    routes: [
-      GoRoute(
-        path: '/order/ingredients',
-        builder: (context, state) => const OrderIngredientView(),
-      ),
-      GoRoute(
-        path: '/order/products',
-        builder: (context, state) => const OrderProductsView(),
-      ),
-      GoRoute(
-        path: '/order/payment',
-        builder: (context, state) => const OrderPaymentView(),
-      ),
-    ],
+List<GoRoute> _orderEditingFlow = [
+  GoRoute(
+    path: '/order/ingredients',
+    builder: (context, state) => const OrderIngredientView(),
+  ),
+  GoRoute(
+    path: '/order/products',
+    builder: (context, state) => const OrderProductsView(),
+  ),
+  GoRoute(
+    path: '/order/payment',
+    builder: (context, state) => const OrderPaymentView(),
   ),
 ];

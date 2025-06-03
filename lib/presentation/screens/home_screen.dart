@@ -43,7 +43,7 @@ class HomeScreen extends ConsumerWidget {
             ),
             FilledButton(
               onPressed: () {
-                context.push(RouterPaths.products);
+                context.push(RouterPaths.database);
               },
               child: Text("Ver pedidos existentes"),
             ),

@@ -1,3 +1,4 @@
+import 'package:dice_pizza/domain/entities/order.dart';
 import 'package:dice_pizza/presentation/bloc/order_contents/order_contents_bloc.dart';
 import 'package:dice_pizza/presentation/bloc/order_database/order_database_bloc.dart';
 import 'package:dice_pizza/presentation/providers/dummyapi/dummy_api_user_provider.dart';
@@ -8,9 +9,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class NewOrderScreen extends ConsumerWidget {
   static const name = "CreateOrder";
-  const NewOrderScreen(this.child, this.orderId, {super.key});
+  const NewOrderScreen(this.child, {this.order, super.key});
   final Widget? child;
-  final int? orderId;
+  final Order? order;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -19,8 +20,12 @@ class NewOrderScreen extends ConsumerWidget {
         ('${ref.watch(userProvider).value?.firstName ?? 'Anonymous'} ${ref.watch(userProvider).value?.lastName ?? ''}');
     return MultiBlocProvider(
       providers: [
-        BlocProvider(create: (context) => OrderDatabaseBloc()),
-        BlocProvider(create: (context) => OrderContentsBloc(userId, userName)),
+        BlocProvider(
+          create:
+              (context) =>
+                  OrderDatabaseBloc(userId: userId, username: userName),
+        ),
+        BlocProvider(create: (context) => OrderContentsBloc()),
       ],
       child: Scaffold(
         bottomNavigationBar: OrderBottomNavigation(),

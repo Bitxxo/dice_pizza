@@ -1,5 +1,7 @@
 import 'package:dice_pizza/config/router/navigation_constants.dart';
+import 'package:dice_pizza/presentation/bloc/order_contents/order_contents_bloc.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 
 class OrderBackButton extends StatelessWidget {
@@ -7,11 +9,18 @@ class OrderBackButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final state = context.watch<OrderContentsBloc>().state;
+    final isUnsaved = !state.saved;
+    final hasContent = state.products.isNotEmpty;
     return Padding(
       padding: EdgeInsets.all(7),
       child: IconButton.filled(
         onPressed: () {
-          exitAlert(context);
+          if (isUnsaved && hasContent) {
+            exitAlert(context);
+          } else {
+            context.pop();
+          }
         },
         icon: Icon(Icons.arrow_back, size: 20, color: Colors.white),
       ),

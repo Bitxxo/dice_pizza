@@ -1,5 +1,4 @@
 import 'package:dice_pizza/domain/entities/order.dart';
-import 'package:dice_pizza/presentation/bloc/order_contents/order_contents_bloc.dart';
 import 'package:dice_pizza/presentation/bloc/order_database/order_database_bloc.dart';
 import 'package:dice_pizza/presentation/widgets/order_list_tile.dart';
 import 'package:dice_pizza/presentation/widgets/shared/loading_box.dart';

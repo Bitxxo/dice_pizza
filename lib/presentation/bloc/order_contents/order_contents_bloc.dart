@@ -150,7 +150,6 @@ class OrderContentsBloc extends Bloc<OrderContentsEvent, OrderContentsState> {
       );
       return;
     }
-    print(event.order);
     emit(
       OrderContentsActive(
         products: state.products,

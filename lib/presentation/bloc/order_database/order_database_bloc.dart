@@ -1,4 +1,3 @@
-import 'package:bloc/bloc.dart';
 import 'package:dice_pizza/domain/entities/order.dart';
 import 'package:dice_pizza/domain/repositories/order_repository.dart';
 import 'package:dice_pizza/infraestructure/datasources/order_isar_datasource.dart';

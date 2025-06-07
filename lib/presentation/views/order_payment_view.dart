@@ -1,7 +1,7 @@
 import 'package:dice_pizza/presentation/bloc/order_contents/order_contents_bloc.dart';
 import 'package:dice_pizza/presentation/widgets/order_editing_scaffold.dart';
-import 'package:dice_pizza/presentation/widgets/payment_form.dart';
-import 'package:dice_pizza/presentation/widgets/product/order_payment_products_list.dart';
+import 'package:dice_pizza/presentation/widgets/order_editing/payment_form.dart';
+import 'package:dice_pizza/presentation/widgets/order_editing/order_payment_products_list.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 

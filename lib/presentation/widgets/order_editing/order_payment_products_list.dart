@@ -1,5 +1,5 @@
 import 'package:dice_pizza/presentation/bloc/order_contents/order_contents_bloc.dart';
-import 'package:dice_pizza/presentation/widgets/product/product_price_tile.dart';
+import 'package:dice_pizza/presentation/widgets/order_editing/pizza_price_tile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -33,7 +33,7 @@ class OrderPaymentProductsList extends StatelessWidget {
                             () => context.read<OrderContentsBloc>().add(
                               PizzaSelected(i),
                             ),
-                        child: ProductPriceTile(products[i]!, i, i == selected),
+                        child: PizzaPriceTile(products[i]!, i, i == selected),
                       ),
                   ],
                 ),

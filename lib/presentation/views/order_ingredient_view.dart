@@ -1,6 +1,6 @@
 import 'package:dice_pizza/presentation/widgets/order_editing_scaffold.dart';
-import 'package:dice_pizza/presentation/widgets/product/order_products_ingredient_selection.dart';
-import 'package:dice_pizza/presentation/widgets/product/order_products_list.dart';
+import 'package:dice_pizza/presentation/widgets/order_editing/order_products_ingredient_selection.dart';
+import 'package:dice_pizza/presentation/widgets/order_editing/order_products_list.dart';
 import 'package:flutter/material.dart';
 
 class OrderIngredientView extends StatelessWidget {

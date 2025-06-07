@@ -2,11 +2,11 @@ import 'package:dice_pizza/domain/entities/pizza.dart';
 import 'package:dice_pizza/presentation/widgets/buttons/remove_product_button.dart';
 import 'package:flutter/material.dart';
 
-class ProductPriceTile extends StatelessWidget {
+class PizzaPriceTile extends StatelessWidget {
   final Pizza product;
   final bool selected;
   final int index;
-  const ProductPriceTile(this.product, this.index, this.selected, {super.key});
+  const PizzaPriceTile(this.product, this.index, this.selected, {super.key});
 
   @override
   Widget build(BuildContext context) {

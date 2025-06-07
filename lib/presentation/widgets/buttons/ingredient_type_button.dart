@@ -19,7 +19,7 @@ class IngredientTypeButton extends StatelessWidget {
     final colors = Theme.of(context).colorScheme;
     return DecoratedBox(
       decoration: BoxDecoration(
-        color: isPresent ? colors.primaryContainer.withAlpha(170) : null,
+        color: isPresent ? colors.primary : colors.primaryContainer,
         border: Border.all(),
         borderRadius: BorderRadius.circular(20),
       ),
@@ -28,7 +28,14 @@ class IngredientTypeButton extends StatelessWidget {
         hoverColor: colors.primaryContainer,
         splashColor: colors.onPrimaryContainer.withAlpha(10),
         onTap: () => toggleIngredient(name, context),
-        child: Center(child: Text(name.value)),
+        child: Center(
+          child: Text(
+            name.value,
+            style: TextStyle(
+              color: isPresent ? colors.onPrimary : colors.onPrimaryContainer,
+            ),
+          ),
+        ),
       ),
     );
   }

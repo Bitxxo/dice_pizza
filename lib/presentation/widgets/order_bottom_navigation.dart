@@ -40,11 +40,11 @@ class OrderBottomNavigation extends StatelessWidget {
   int getCurrentIndex(BuildContext context) {
     final route = GoRouter.of(context).state.fullPath;
     switch (route) {
-      case RouterPaths.ingredients:
+      case RouterPaths.ingredients || RouterPaths.dbIngredients:
         return 0;
-      case RouterPaths.products:
+      case RouterPaths.products || RouterPaths.dbProducts:
         return 1;
-      case RouterPaths.payment:
+      case RouterPaths.payment || RouterPaths.dbPayment:
         return 2;
       default:
         return 1;
@@ -52,13 +52,17 @@ class OrderBottomNavigation extends StatelessWidget {
   }
 
   void onDestinationSelected(int index, BuildContext context) {
+    if (getCurrentIndex(context) == index) return;
+    final isDb = GoRouter.of(context).state.fullPath!.contains('database');
     switch (index) {
       case 0:
-        context.push(RouterPaths.ingredients);
+        context.push(
+          isDb ? RouterPaths.dbIngredients : RouterPaths.ingredients,
+        );
       case 1:
-        context.push(RouterPaths.products);
+        context.push(isDb ? RouterPaths.dbProducts : RouterPaths.products);
       case 2:
-        context.push(RouterPaths.payment);
+        context.push(isDb ? RouterPaths.dbPayment : RouterPaths.payment);
     }
   }
 }

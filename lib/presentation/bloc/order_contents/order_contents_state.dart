@@ -7,6 +7,7 @@ class OrderContentsState extends Equatable {
   final int totalPrice;
   final Order? order;
   final bool saved;
+  final bool paid;
 
   @override
   String toString() => 'Producto seleccionado: $selected, pizzas: $products';
@@ -17,10 +18,18 @@ class OrderContentsState extends Equatable {
     this.totalPrice = 0,
     this.order,
     this.saved = false,
+    this.paid = false,
   });
 
   @override
-  List<Object?> get props => [saved, products, selected, totalPrice, order];
+  List<Object?> get props => [
+    saved,
+    products,
+    selected,
+    totalPrice,
+    order,
+    paid,
+  ];
 
   OrderContentsState copyWith({
     final Map<int, Pizza>? products,
@@ -28,18 +37,20 @@ class OrderContentsState extends Equatable {
     final int? totalPrice,
     final Order? order,
     final bool? saved,
+    final bool? paid,
   }) => OrderContentsState(
     selected: selected ?? this.selected,
     products: products ?? this.products,
     totalPrice: totalPrice ?? this.totalPrice,
     order: order ?? this.order,
     saved: saved ?? this.saved,
+    paid: paid ?? this.paid,
   );
 }
 
 class OrderContentsInitial extends OrderContentsState {
-  const OrderContentsInitial({super.order, super.saved})
-    : super(products: const {}, selected: 0, totalPrice: 0);
+  OrderContentsInitial({super.order, super.saved, super.paid})
+    : super(products: {}, selected: 0, totalPrice: 0);
 }
 
 class OrderContentsLoading extends OrderContentsState {
@@ -49,6 +60,7 @@ class OrderContentsLoading extends OrderContentsState {
     super.totalPrice,
     super.order,
     super.saved,
+    super.paid,
   });
 }
 
@@ -62,6 +74,7 @@ class OrderContentsError extends OrderContentsState {
     super.totalPrice,
     super.order,
     super.saved,
+    super.paid,
   });
   @override
   List<Object?> get props => [
@@ -71,6 +84,7 @@ class OrderContentsError extends OrderContentsState {
     totalPrice,
     order,
     errorMessage,
+    paid,
   ];
 }
 
@@ -81,5 +95,6 @@ class OrderContentsActive extends OrderContentsState {
     super.totalPrice,
     super.order,
     super.saved,
+    super.paid,
   });
 }

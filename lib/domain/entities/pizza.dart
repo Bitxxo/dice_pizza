@@ -135,6 +135,13 @@ enum PizzaTypes {
   confusa,
 }
 
+extension NameCorrections on PizzaTypes {
+  String get value => name.replaceFirst(
+    name.substring(0, 1),
+    name.substring(0, 1).toUpperCase(),
+  );
+}
+
 const Map<String, List<Ingredient>> pizzaTypeIngredients = {
   'Margarita': [],
   'Barbacoa': [Ingredient.bacon, Ingredient.cebolla],

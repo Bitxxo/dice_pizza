@@ -1,10 +1,12 @@
 import 'package:dice_pizza/domain/entities/pizza.dart';
+import 'package:dice_pizza/presentation/widgets/buttons/remove_product_button.dart';
 import 'package:flutter/material.dart';
 
 class ProductPriceTile extends StatelessWidget {
   final Pizza product;
   final bool selected;
-  const ProductPriceTile(this.product, this.selected, {super.key});
+  final int index;
+  const ProductPriceTile(this.product, this.index, this.selected, {super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -14,12 +16,19 @@ class ProductPriceTile extends StatelessWidget {
         Tooltip(
           message: product.readableIngredients(),
           child: ListTile(
+            trailing: RemoveProductButton(index),
             shape: RoundedRectangleBorder(
               side: BorderSide(),
               borderRadius: BorderRadius.circular(20),
             ),
             title: Text(product.name),
-            subtitle: Text('${product.price} €', textAlign: TextAlign.end),
+            subtitle: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Text('${product.price} €', textAlign: TextAlign.end),
+                SizedBox(width: 20),
+              ],
+            ),
             selected: selected,
             tileColor: colors.primaryContainer,
             textColor: colors.onPrimaryContainer,

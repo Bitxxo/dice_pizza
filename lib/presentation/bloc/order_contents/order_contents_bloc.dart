@@ -17,6 +17,7 @@ class OrderContentsBloc extends Bloc<OrderContentsEvent, OrderContentsState> {
     on<PizzaEdited>((event, emit) => _onPizzaEdited(event, emit));
     on<IngredientToggled>((event, emit) => _onIngredientToggled(event, emit));
     on<OrderContentsSaved>((event, emit) => _saveOrder(event, emit));
+    on<TogglePaid>((event, emit) => _togglePaid(event, emit));
     on<OrderContentsEvent>((event, emit) {});
   }
 
@@ -35,6 +36,7 @@ class OrderContentsBloc extends Bloc<OrderContentsEvent, OrderContentsState> {
         OrderContentsActive(
           products: {0: event.pizza},
           totalPrice: event.pizza.price,
+          paid: false,
         ),
       );
     } else {
@@ -49,6 +51,7 @@ class OrderContentsBloc extends Bloc<OrderContentsEvent, OrderContentsState> {
           totalPrice: _getTotalPrice(),
           order: state.order,
           saved: false,
+          paid: state.paid,
         ),
       );
     }
@@ -73,6 +76,7 @@ class OrderContentsBloc extends Bloc<OrderContentsEvent, OrderContentsState> {
         totalPrice: _getTotalPrice(),
         order: state.order,
         saved: false,
+        paid: state.paid,
       ),
     );
   }
@@ -94,6 +98,7 @@ class OrderContentsBloc extends Bloc<OrderContentsEvent, OrderContentsState> {
         totalPrice: _getTotalPrice(),
         order: state.order,
         saved: false,
+        paid: state.paid,
       ),
     );
   }
@@ -105,6 +110,7 @@ class OrderContentsBloc extends Bloc<OrderContentsEvent, OrderContentsState> {
     } else if (state.products.isEmpty) {
       emit(
         OrderContentsError(
+          paid: state.paid,
           products: state.products,
           selected: state.selected,
           errorMessage:
@@ -131,6 +137,7 @@ class OrderContentsBloc extends Bloc<OrderContentsEvent, OrderContentsState> {
         totalPrice: _getTotalPrice(),
         order: state.order,
         saved: false,
+        paid: state.paid,
       ),
     );
   }
@@ -146,6 +153,8 @@ class OrderContentsBloc extends Bloc<OrderContentsEvent, OrderContentsState> {
           products: state.products,
           selected: state.selected,
           errorMessage: 'Error al almacenar pedido',
+          paid: state.paid,
+          totalPrice: _getTotalPrice(),
         ),
       );
       return;
@@ -156,6 +165,8 @@ class OrderContentsBloc extends Bloc<OrderContentsEvent, OrderContentsState> {
         order: event.order,
         selected: state.selected,
         saved: true,
+        paid: state.paid,
+        totalPrice: _getTotalPrice(),
       ),
     );
   }
@@ -168,8 +179,39 @@ class OrderContentsBloc extends Bloc<OrderContentsEvent, OrderContentsState> {
       products: _loadProducts(event.order.products),
       order: event.order,
       saved: true,
+      selected: state.selected,
+      totalPrice: event.order.cost,
+      paid: event.order.paid,
     );
     emit(loaded);
+  }
+
+  Future<void> _togglePaid(TogglePaid event, emit) async {
+    if (_loading()) {
+      return;
+    } else if (state.products.isEmpty || state is OrderContentsInitial) {
+      emit(
+        OrderContentsError(
+          products: state.products,
+          selected: state.selected,
+          errorMessage: '¡No hay productos que pagar!',
+          order: state.order,
+        ),
+      );
+      return;
+    }
+    _setLoading(emit);
+    final toggled = !(state.paid);
+    emit(
+      OrderContentsActive(
+        products: state.products,
+        order: state.order?.copyWith(paid: toggled),
+        selected: state.selected,
+        saved: false,
+        totalPrice: _getTotalPrice(),
+        paid: toggled,
+      ),
+    );
   }
 
   //Calcula el precio total del pedido
@@ -209,6 +251,7 @@ class OrderContentsBloc extends Bloc<OrderContentsEvent, OrderContentsState> {
         selected: state.selected,
         totalPrice: state.totalPrice,
         order: state.order,
+        paid: state.paid,
       ),
     );
   }

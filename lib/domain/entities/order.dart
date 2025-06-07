@@ -1,5 +1,5 @@
 import 'package:dice_pizza/domain/entities/pizza.dart';
-import 'package:dice_pizza/extensions/last_modified_format.dart';
+import 'package:dice_pizza/domain/extensions/last_modified_format.dart';
 import 'package:isar/isar.dart';
 
 part 'order.g.dart';
@@ -36,15 +36,17 @@ class Order {
   Order copyWith({
     Id? id = Isar.autoIncrement,
     int? createdBy,
-    List<Pizza> products = const [],
+    List<Pizza>? products,
     int? cost,
+    bool? paid,
   }) {
     return Order(
       id: id ?? this.id,
       createdBy: createdBy ?? this.createdBy,
-      products: products.isEmpty ? this.products : products,
+      products: products ?? this.products,
       cost: cost ?? this.cost,
       lastModified: DateTime.now(),
+      paid: paid ?? this.paid,
     );
   }
 
@@ -61,4 +63,24 @@ class Order {
     }
     return names;
   }
+
+  factory Order.fromJson(Map<String, dynamic> json) => Order(
+    id: json["id"],
+    createdBy: json["created by"],
+    products: List<Pizza>.from(json["products"].map((x) => Pizza.fromJson(x))),
+    cost: json["cost"],
+    paid: json["paid"],
+    lastModified: json["lastModified"],
+    creatorName: json["creatorNmae"],
+  );
+
+  Map<String, dynamic> toJson() => {
+    "id": id,
+    "created by": createdBy,
+    "products": List<dynamic>.from(products.map((x) => x.toJson())),
+    "cost": cost,
+    "paid": paid,
+    "lastModified": lastModified,
+    "creatorNmae": creatorName,
+  };
 }

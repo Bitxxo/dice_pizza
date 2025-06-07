@@ -26,7 +26,7 @@ class OrderDatabaseScreen extends StatelessWidget {
       body: Center(
         child: SizedBox(
           width: size.width * 0.5,
-          height: size.height * 0.5,
+          height: size.height * 0.7,
           child: _OrderListView(),
         ),
       ),

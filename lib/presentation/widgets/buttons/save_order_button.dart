@@ -2,7 +2,6 @@ import 'package:dice_pizza/presentation/bloc/order_contents/order_contents_bloc.
 import 'package:dice_pizza/presentation/bloc/order_database/order_database_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class SaveOrderButton extends StatelessWidget {
   final bool bigScreen;
@@ -19,12 +18,12 @@ class SaveOrderButton extends StatelessWidget {
   }
 }
 
-class _SaveButton extends ConsumerWidget {
+class _SaveButton extends StatelessWidget {
   const _SaveButton({required this.bigScreen});
   final bool bigScreen;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     return FilledButton.icon(
       onPressed: () async {
         context.read<OrderDatabaseBloc>().add(SaveOrder(context));

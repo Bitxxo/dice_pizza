@@ -17,6 +17,16 @@ class OrderListTile extends StatelessWidget {
       width: 600,
       child: Material(
         child: ListTile(
+          leading: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              Icon(
+                order.paid ? Icons.verified : Icons.cancel_outlined,
+                color: textColor,
+              ),
+              Text(order.paid ? '    Pagado    ' : ' No pagado '),
+            ],
+          ),
           onTap: () {
             context.read<OrderContentsBloc>().add(OrderContentsRead(order));
             context.push(RouterPaths.dbProducts);
@@ -26,10 +36,11 @@ class OrderListTile extends StatelessWidget {
           ),
           tileColor: background,
           textColor: textColor,
+          hoverColor: background.withBlue(180),
           title: Text(
             'Pedido ${order.id}, creado por ${order.creatorName}, Modificado: ${order.lastModifiedDate}',
           ),
-          subtitle: Text(order.productNames),
+          subtitle: Text(order.productNames, overflow: TextOverflow.ellipsis),
           trailing: IconButton(
             icon: Icon(Icons.arrow_forward, color: textColor),
             onPressed: () {

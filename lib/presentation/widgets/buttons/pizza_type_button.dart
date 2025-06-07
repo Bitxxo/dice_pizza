@@ -19,7 +19,7 @@ class PizzaTypeButton extends StatelessWidget {
     final colors = Theme.of(context).colorScheme;
     return DecoratedBox(
       decoration: BoxDecoration(
-        color: isCurrentType ? colors.primaryContainer.withAlpha(170) : null,
+        color: isCurrentType ? colors.primary : colors.primaryContainer,
         border: Border.all(),
         borderRadius: BorderRadius.circular(20),
       ),
@@ -31,7 +31,17 @@ class PizzaTypeButton extends StatelessWidget {
           hoverColor: Colors.amberAccent.shade100,
           splashColor: Colors.amber,
           onTap: () => addPizza(Pizza.fromType(type), context),
-          child: Center(child: Text(type.name)),
+          child: Center(
+            child: Text(
+              type.value,
+              style: TextStyle(
+                color:
+                    isCurrentType
+                        ? colors.onPrimary
+                        : colors.onPrimaryContainer,
+              ),
+            ),
+          ),
         ),
       ),
     );

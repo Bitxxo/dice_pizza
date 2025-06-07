@@ -14,7 +14,7 @@ class OrderDatabaseBloc extends Bloc<OrderDatabaseEvent, OrderDatabaseState> {
   late final OrderRepository repository;
   final int userId;
   final String username;
-  OrderDatabaseBloc({this.userId = 0, this.username = 'Anonymous'})
+  OrderDatabaseBloc({this.userId = 0, this.username = 'Anónimo'})
     : super(OrderDatabaseInitial()) {
     final datasource = OrderIsarDatasource();
     datasource.init();
@@ -55,7 +55,9 @@ class OrderDatabaseBloc extends Bloc<OrderDatabaseEvent, OrderDatabaseState> {
             createdBy: userId,
             creatorName: username,
             products: contents.products.values.toList(),
-            id: contents.order?.id,
+            id: null,
+            paid: contents.paid,
+            cost: contents.totalPrice,
           );
       await repository.createOrder(order).then((id) {
         emit(OrderDatabaseSaved(id!));

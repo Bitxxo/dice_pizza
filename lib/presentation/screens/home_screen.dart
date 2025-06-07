@@ -10,6 +10,7 @@ class HomeScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final width = MediaQuery.of(context).size.width;
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -22,14 +23,20 @@ class HomeScreen extends ConsumerWidget {
                   ),
               loading: () => CircularProgressIndicator(),
             ),
-        // actions: [SizedBox(width: 30)],
+        actions: [
+          FilledButton.icon(
+            onPressed: () => context.go(RouterPaths.themes),
+            label: Text('Cambiar apariencia'),
+            icon: Icon(Icons.palette),
+          ),
+        ],
       ),
-      floatingActionButton: FilledButton.tonalIcon(
+      floatingActionButton: FilledButton.icon(
         onPressed: () => context.go(RouterPaths.profile),
         label: Text('Perfil'),
         icon: Icon(Icons.person),
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.endTop,
+      floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -39,13 +46,33 @@ class HomeScreen extends ConsumerWidget {
               onPressed: () {
                 context.push(RouterPaths.products);
               },
-              child: Text("Crear pedido"),
+              child: SizedBox(
+                width: width * 0.3,
+                height: 60,
+                child: Center(
+                  child: Text(
+                    "Crear pedido",
+                    style: TextStyle(fontSize: 20),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ),
             ),
-            FilledButton(
+            FilledButton.tonal(
               onPressed: () {
                 context.push(RouterPaths.database);
               },
-              child: Text("Ver pedidos existentes"),
+              child: SizedBox(
+                width: width * 0.3,
+                height: 60,
+                child: Center(
+                  child: Text(
+                    "Ver pedidos existentes",
+                    style: TextStyle(fontSize: 20),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ),
             ),
           ],
         ),

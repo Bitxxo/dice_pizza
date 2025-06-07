@@ -28,12 +28,15 @@ enum Ingredient {
 //porque los enum no permiten ciertos caracteres
 extension NameCorrections on Ingredient {
   String get value => switch (name) {
-    'pina' => 'piña',
-    'atun' => 'atún',
-    'polloVegano' => 'pollo vegano',
-    'jamon' => 'jamón',
-    'champinon' => 'champiñón',
-    'queso' => 'queso extra',
-    _ => name,
+    'pina' => 'Piña',
+    'atun' => 'Atún',
+    'polloVegano' => 'Pollo vegano',
+    'jamon' => 'Jamón',
+    'champinon' => 'Champiñón',
+    'queso' => 'Queso extra',
+    _ => name.replaceFirst(
+      name.substring(0, 1),
+      name.substring(0, 1).toUpperCase(),
+    ),
   };
 }

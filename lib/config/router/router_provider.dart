@@ -8,6 +8,7 @@ import 'package:dice_pizza/presentation/screens/home_screen.dart';
 import 'package:dice_pizza/presentation/screens/login_screen.dart';
 import 'package:dice_pizza/presentation/screens/new_order_screen.dart';
 import 'package:dice_pizza/presentation/screens/profile_screen.dart';
+import 'package:dice_pizza/presentation/screens/theme_screen.dart';
 import 'package:dice_pizza/presentation/views/order_ingredient_view.dart';
 import 'package:dice_pizza/presentation/views/order_payment_view.dart';
 import 'package:dice_pizza/presentation/views/order_products_view.dart';
@@ -59,6 +60,10 @@ List<RouteBase> _routes = [
         name: HomeScreen.name,
         builder: (context, state) => const HomeScreen(),
         routes: [
+          GoRoute(
+            path: '/theme',
+            builder: (context, state) => const ThemeChangerScreen(),
+          ),
           GoRoute(
             path: '/profile',
             builder: (context, state) => const ProfileScreen(),

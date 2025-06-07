@@ -24,10 +24,7 @@ class PizzaDisplay extends StatelessWidget {
     final colors = Theme.of(context).colorScheme;
     return DecoratedBox(
       decoration: BoxDecoration(
-        color:
-            selected
-                ? colors.primaryContainer.withAlpha(170)
-                : colors.onPrimaryContainer.withAlpha(50),
+        color: selected ? colors.surfaceTint : colors.surfaceDim,
         border: Border.all(width: selected ? 2 : 1),
         borderRadius: BorderRadius.circular(20),
       ),
@@ -49,7 +46,15 @@ class PizzaDisplay extends StatelessWidget {
                       : [
                         Row(
                           children: [
-                            Text(pizza.name),
+                            Text(
+                              pizza.name,
+                              style: TextStyle(
+                                color:
+                                    selected
+                                        ? colors.surface
+                                        : colors.onSecondaryContainer,
+                              ),
+                            ),
                             Spacer(),
                             RemoveProductButton(index),
                           ],
@@ -73,12 +78,26 @@ class PizzaDisplay extends StatelessWidget {
                                       i.value,
                                       textAlign: TextAlign.center,
                                       overflow: TextOverflow.visible,
+                                      style: TextStyle(
+                                        color:
+                                            selected
+                                                ? colors.surface
+                                                : colors.onSurfaceVariant,
+                                      ),
                                     ),
                                 ],
                               ),
                             ),
                         Spacer(),
-                        Text('${pizza.price}€'),
+                        Text(
+                          '${pizza.price}€',
+                          style: TextStyle(
+                            color:
+                                selected
+                                    ? colors.surface
+                                    : colors.onSurfaceVariant,
+                          ),
+                        ),
                       ],
             ),
           ),

@@ -39,3 +39,5 @@ class OrderContentsRead extends OrderContentsEvent {
   final Order order;
   const OrderContentsRead(this.order);
 }
+
+class TogglePaid extends OrderContentsEvent {}

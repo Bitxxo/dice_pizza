@@ -14,9 +14,6 @@ class DummyRefreshInterceptor extends Interceptor {
   @override
   void onRequest(RequestOptions options, RequestInterceptorHandler handler) {
     if (options.headers.containsKey('Authorization')) {
-      //todo verificar que el token no haya expirado
-      //verificar si expiró o no antes de que la petición se realice
-      //según el resultado, se actualiza el stream
       authNeeded = true;
     } else {
       authNeeded = false;

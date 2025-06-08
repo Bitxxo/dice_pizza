@@ -23,7 +23,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   Widget build(BuildContext context) {
     final TextTheme theme = Theme.of(context).textTheme;
     return Scaffold(
-      appBar: AppBar(centerTitle: true, title: const Text('Profile')),
+      appBar: AppBar(centerTitle: true, title: const Text('Perfil')),
       body: SingleChildScrollView(
         child: Center(
           child: ref

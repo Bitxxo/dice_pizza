@@ -17,7 +17,6 @@ class OrderEditingScaffold extends StatelessWidget {
     final colors = Theme.of(context).colorScheme;
     return Scaffold(
       appBar: AppBar(
-        centerTitle: true,
         backgroundColor: colors.tertiaryContainer,
         title: Text(title),
         toolbarHeight: 50,

@@ -16,13 +16,6 @@ final authProvider = StateNotifierProvider<AuthNotifier, AuthStatus>((ref) {
 
 enum AuthStatus { error, checking, authenticated, unauthenticated, guest }
 
-/*
-final authStatusProvider=StreamProvider.family((ref, AuthStatus status){
-  Stream<AuthStatus> statusStream=Stream.value(status);
-  return statusStream;
-});
-*/
-
 ///Logs in via the [DummyApiService]
 class AuthNotifier extends StateNotifier<AuthStatus> {
   final Ref ref;
@@ -30,10 +23,6 @@ class AuthNotifier extends StateNotifier<AuthStatus> {
   String error = '';
 
   AuthNotifier(this.api, this.ref) : super(AuthStatus.unauthenticated);
-
-  Future<bool> isGuest() async {
-    return await stream.last == AuthStatus.guest;
-  }
 
   ///Creates a login request with the specified parameters and uses it to log in using the api,
   ///then saves the resulting [User] in its state
@@ -90,7 +79,7 @@ class AuthNotifier extends StateNotifier<AuthStatus> {
 
     final DummyRequest request = DummyRequest.refresh(
       refreshToken,
-      expiresInMins: '1',
+      expiresInMins: '30',
     );
     final newTokens = await api.refreshToken(request);
     ref.read(tokenProvider.notifier).update((state) => newTokens);

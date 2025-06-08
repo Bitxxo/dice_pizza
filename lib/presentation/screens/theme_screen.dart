@@ -7,7 +7,7 @@ class ThemeChangerScreen extends ConsumerWidget {
   static const nombre = 'Theme Screen';
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final bool modoOscuro = ref.watch(themeProvider).modoOscuro;
+    final bool darkMode = ref.watch(themeProvider).darkMode;
     final colors = Theme.of(context).colorScheme;
     return Scaffold(
       backgroundColor: colors.surfaceContainerHighest,
@@ -19,7 +19,7 @@ class ThemeChangerScreen extends ConsumerWidget {
               ref.read(themeProvider.notifier).toggleDarkMode();
             },
             icon:
-                modoOscuro
+                darkMode
                     ? const Icon(Icons.dark_mode_outlined)
                     : const Icon(Icons.light_mode_outlined),
           ),

@@ -34,9 +34,16 @@ final routerProvider = Provider((ref) {
                   ),
                 ),
               );
+            } else {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('Sesión caducada', textAlign: TextAlign.center),
+                ),
+              );
             }
             return RouterPaths.login;
           }
+          ref.read(authProvider.notifier).refreshSession();
         }
       }
       return null;

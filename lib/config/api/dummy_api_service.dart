@@ -46,7 +46,6 @@ class DummyApiService {
   Future<Map<String, dynamic>> refreshToken(DummyRequest request) async {
     Map<String, dynamic> data = {};
     try {
-      //todo probar a hacerle su propio dio a este método
       await dio.post(request.endpoint.name, data: request.info).then((json) {
         data = json.data;
       });

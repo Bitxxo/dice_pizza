@@ -13,7 +13,6 @@ class HomeScreen extends ConsumerWidget {
     final width = MediaQuery.of(context).size.width;
     return Scaffold(
       appBar: AppBar(
-        centerTitle: true,
         title: ref
             .watch(userProvider)
             .whenOrNull(

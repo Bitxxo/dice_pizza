@@ -7,9 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  SystemChrome.setPreferredOrientations([
-    DeviceOrientation.portraitUp,
-  ]).then((value) => runApp(const ProviderScope(child: DiceApp())));
+  runApp(const ProviderScope(child: DiceApp()));
 }
 
 class DiceApp extends StatelessWidget {

@@ -56,7 +56,11 @@ class _OrderDatabaseListViewState extends State<OrderDatabaseListView> {
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
     final state = context.watch<OrderDatabaseBloc>().state;
+<<<<<<< HEAD
     return (orders.isEmpty && state is! OrderDatabaseLoading)
+=======
+    return orders.isEmpty
+>>>>>>> bc6a7a268518b024bb45dc430fe5fea5efee5493
         ? Center(
           child: ErrorMessageDisplay(
             message: 'No hay pedidos almacenados localmente',

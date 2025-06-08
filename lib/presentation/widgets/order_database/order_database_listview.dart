@@ -1,6 +1,7 @@
 import 'package:dice_pizza/domain/entities/order.dart';
 import 'package:dice_pizza/presentation/bloc/order_database/order_database_bloc.dart';
 import 'package:dice_pizza/presentation/widgets/order_database/order_list_tile.dart';
+import 'package:dice_pizza/presentation/widgets/shared/error_message_display.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -55,28 +56,35 @@ class _OrderDatabaseListViewState extends State<OrderDatabaseListView> {
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
     final state = context.watch<OrderDatabaseBloc>().state;
-    return ListView.builder(
-      itemCount: orders.length + 1,
-      controller: controller,
-      shrinkWrap: false,
-      itemBuilder: (context, index) {
-        if (index == orders.length && state is OrderDatabaseLoading ||
-            orders.isEmpty) {
-          return CircularProgressIndicator();
-        }
-        if (index == orders.length) return SizedBox(height: 100);
+    return orders.isEmpty
+        ? Center(
+          child: ErrorMessageDisplay(
+            message: 'No hay pedidos almacenados localmente',
+          ),
+        )
+        : ListView.builder(
+          itemCount: orders.length + 1,
+          controller: controller,
+          shrinkWrap: false,
+          itemBuilder: (context, index) {
+            if (index == orders.length && state is OrderDatabaseLoading ||
+                orders.isEmpty) {
+              return SizedBox(width: 50, child: CircularProgressIndicator());
+            }
+            if (index == orders.length) return SizedBox(height: 100);
 
-        final background = index % 2 == 0 ? colors.primary : colors.secondary;
-        final textColor =
-            index % 2 == 0 ? colors.onPrimary : colors.onSecondary;
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            OrderListTile(orders[index], background, textColor),
-            Divider(),
-          ],
+            final background =
+                index % 2 == 0 ? colors.primary : colors.secondary;
+            final textColor =
+                index % 2 == 0 ? colors.onPrimary : colors.onSecondary;
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                OrderListTile(orders[index], background, textColor),
+                Divider(),
+              ],
+            );
+          },
         );
-      },
-    );
   }
 }

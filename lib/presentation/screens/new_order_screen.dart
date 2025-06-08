@@ -17,7 +17,7 @@ class NewOrderScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final userId = ref.watch(userProvider).value?.id ?? 0;
     final userName =
-        ('${ref.watch(userProvider).value?.firstName ?? 'Anonymous'} ${ref.watch(userProvider).value?.lastName ?? ''}');
+        ('${ref.watch(userProvider).value?.firstName ?? 'Anónimo'} ${ref.watch(userProvider).value?.lastName ?? ''}');
     return MultiBlocProvider(
       providers: [
         BlocProvider(

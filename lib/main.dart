@@ -2,11 +2,9 @@ import 'package:dice_pizza/config/router/router_provider.dart';
 import 'package:dice_pizza/config/theme/app_theme.dart';
 import 'package:dice_pizza/presentation/providers/dummyapi/theme_provider.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 Future<void> main() async {
-  WidgetsFlutterBinding.ensureInitialized();
   runApp(const ProviderScope(child: DiceApp()));
 }
 

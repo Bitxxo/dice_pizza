@@ -1,0 +1,6 @@
+{
+    "bloc.languageServer.enabled": false,
+    "bloc.newCubitTemplate.useSealedClasses": false,
+    "bloc.newCubitTemplate.type": "equatable",
+    "bloc.newBlocTemplate.type": "equatable"
+}

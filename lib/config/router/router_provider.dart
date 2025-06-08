@@ -1,57 +1,118 @@
 import 'package:dice_pizza/config/router/navigation_constants.dart';
+import 'package:dice_pizza/presentation/bloc/existing_order_bloc_injection.dart';
+import 'package:dice_pizza/presentation/providers/dummyapi/dummy_api_auth_provider.dart';
+import 'package:dice_pizza/presentation/providers/dummyapi/dummy_api_user_provider.dart';
+import 'package:dice_pizza/presentation/screens/existing_order_screen.dart';
+import 'package:dice_pizza/presentation/screens/order_database_screen.dart';
 import 'package:dice_pizza/presentation/screens/home_screen.dart';
-import 'package:dice_pizza/presentation/screens/order_screen.dart';
-import 'package:dice_pizza/presentation/views/order_customer_view.dart';
+import 'package:dice_pizza/presentation/screens/login_screen.dart';
+import 'package:dice_pizza/presentation/screens/new_order_screen.dart';
+import 'package:dice_pizza/presentation/screens/profile_screen.dart';
+import 'package:dice_pizza/presentation/screens/theme_screen.dart';
+import 'package:dice_pizza/presentation/views/order_ingredient_view.dart';
 import 'package:dice_pizza/presentation/views/order_payment_view.dart';
 import 'package:dice_pizza/presentation/views/order_products_view.dart';
+import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:riverpod/riverpod.dart';
 
 final routerProvider = Provider((ref) {
-  return _router();
+  return _router(
+    redirect: (context, state) {
+      final AuthStatus status = ref.read(authProvider);
+      if (status != AuthStatus.authenticated) {
+        if (state.matchedLocation == RouterPaths.profile) {
+          final bool refreshable =
+              ref.read(tokenProvider)['refreshToken'] != '';
+          if (!refreshable) {
+            if (ref.read(authProvider) == AuthStatus.guest) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text(
+                    '¡Inicia sesión para ver tu perfil!',
+                    textAlign: TextAlign.center,
+                  ),
+                ),
+              );
+            } else {
+              ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(
+                  content: Text('Sesión caducada', textAlign: TextAlign.center),
+                ),
+              );
+            }
+            return RouterPaths.login;
+          }
+          ref.read(authProvider.notifier).refreshSession();
+        }
+      }
+      return null;
+    },
+  );
 });
 
 GoRouter _router({GoRouterRedirect? redirect}) => GoRouter(
   redirect: redirect,
-  initialLocation: RouterPaths.home,
+  initialLocation: RouterPaths.login,
   routes: _routes,
 );
 
-List<GoRoute> _routes = [
+List<RouteBase> _routes = [
   GoRoute(
     path: '/',
-    name: HomeScreen.name,
-    builder: (context, state) => const HomeScreen(),
+    builder: (context, state) => const LoginScreen(),
     routes: [
       GoRoute(
-        path: 'order',
-        name: OrderScreen.name,
-        builder: (context, state) {
-          String? orderId = state.pathParameters['id'];
-          if (orderId == null || orderId == 'null') {
-            return const OrderScreen(null);
-          } else {
-            return OrderScreen(orderId);
-          }
-        },
+        path: 'u',
+        name: HomeScreen.name,
+        builder: (context, state) => const HomeScreen(),
         routes: [
           GoRoute(
-            path: '/customer',
-            name: OrderCustomerView.name,
-            builder: (context, state) => const OrderCustomerView(),
+            path: '/theme',
+            builder: (context, state) => const ThemeChangerScreen(),
           ),
           GoRoute(
-            path: '/products',
-            name: OrderProductsView.name,
-            builder: (context, state) => const OrderProductsView(),
+            path: '/profile',
+            builder: (context, state) => const ProfileScreen(),
           ),
-          GoRoute(
-            path: '/payment',
-            name: OrderPaymentView.name,
-            builder: (context, state) => const OrderPaymentView(),
+          ShellRoute(
+            builder: (context, state, child) => NewOrderScreen(child),
+            routes: _orderEditingFlow,
+          ),
+          ShellRoute(
+            builder:
+                (context, state, child) => ExistingOrderBlocInjection(child),
+            routes: [
+              GoRoute(
+                path: '/database',
+                builder: (context, state) => const OrderDatabaseScreen(),
+                routes: [
+                  ShellRoute(
+                    builder:
+                        (context, state, child) => ExistingOrderScreen(child),
+                    routes: _orderEditingFlow,
+                  ),
+                ],
+              ),
+            ],
           ),
         ],
       ),
     ],
+  ),
+];
+
+List<GoRoute> _orderEditingFlow = [
+  GoRoute(
+    path: '/order/ingredients',
+    builder: (context, state) => const OrderIngredientView(),
+  ),
+  GoRoute(
+    path: '/order/products',
+    builder: (context, state) => const OrderProductsView(),
+  ),
+  GoRoute(
+    path: '/order/payment',
+    builder: (context, state) => const OrderPaymentView(),
   ),
 ];
